@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    --bg: #0a0a0a;
+    --fg: white;
+    --border: #333;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--fg);
+}
+
+h1 {
+    font-size: 40px;
+    font-weight: 900;
+}
+
+p {
+    font-size: 15px;
+}
+
+.border-color {
+    border-color: var(--border);
+}
+
+.background-bg {
+    background-color: var(--bg);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.border-d {
+    border-radius: 23px;
+    border: 1px solid var(--border);
+}
+
+.border-l {
+    border-radius: 0px 23px 23px 0px;
+}
+
+.border-ll {
+    border-left: 1px solid var(--border);
+}
+
+.border-b {
+    border-bottom: 1px solid var(--border);
+}
+
+.border-r {
+    border-right: 1px solid var(--border);
+}
+
+.image-banner {
+    z-index: 1;
+}
+
+.image-edit:hover .image-edit-buttons {
+    visibility: visible;
+}
+
+.image-edit-buttons {
+    z-index: 100;
+    visibility: hidden;
+}
+
+.avatar-banner {
+    z-index: 1;
+}
+
+.avatar-edit:hover .avatar-edit-buttons {
+    visibility: visible;
+}
+
+.avatar-edit-buttons {
+    z-index: 100;
+    visibility: hidden;
+}
+
+/*
+    For loading
+*/
+
+@keyframes pulsate-wave {
+    0% {
+        background-color: #111;
+    }
+    25% {
+        background-color: #222;
+    }
+    50% {
+        background-color: #333;
+    }
+    75% {
+        background-color: #222;
+    }
+    100% {
+        background-color: #111;
+    }
+}
+
+.pulsating-span {
+    animation: pulsate-wave 1.5s infinite;
+    background-color: #333;
+    border-radius: 15px;
+    color: transparent;
+}
+
+.pulsating-span:nth-child(0) {
+    animation-delay: 1s;
+}
