@@ -1,8 +1,11 @@
 import { db } from '@/lib/db';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { NextResponse } from 'next/server';
 import * as fs from 'fs/promises';
 import path from 'path';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import UserType from '@/types/user';
 
 export const POST = async (req: Request) => {
     try {
@@ -94,6 +97,96 @@ export const POST = async (req: Request) => {
 
         return NextResponse.json(
             { user: rest, message: 'User created succsessfully' },
+            { status: 201 }
+        );
+    } catch (e) {
+        return Response.json(
+            { message: 'Someting went wrong...' },
+            { status: 500 }
+        );
+    }
+};
+
+export const PATCH = async (req: Request) => {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session) {
+            return NextResponse.json(
+                {
+                    user: null,
+                    message: 'Not authorized',
+                    type: 'Missing authorization',
+                },
+                { status: 401 }
+            );
+        }
+
+        const body = await req.json();
+        const {
+            email,
+            username,
+            fullName,
+            biography,
+            birthDate,
+            location,
+            newPassword,
+            oldPassword,
+        } = body;
+
+        const existingUser = await db.user.findUnique({
+            where: {
+                id: session.user.id,
+            },
+        });
+
+        if (!existingUser) {
+            return NextResponse.json(
+                { user: null, message: 'User was not found' },
+                { status: 404 }
+            );
+        }
+
+        if (oldPassword) {
+            const isPasswordValid = await compare(
+                oldPassword,
+                existingUser.password
+            );
+
+            if (!isPasswordValid) {
+                return NextResponse.json(
+                    {
+                        user: null,
+                        message: 'Old password is incorrect',
+                        type: 'invalid-old-password',
+                    },
+                    { status: 401 }
+                );
+            }
+        }
+
+        let hashedNewPassword;
+        if (newPassword) {
+            hashedNewPassword = await hash(newPassword, 10);
+        }
+
+        const updatedUser = await db.user.update({
+            where: {
+                id: session.user.id,
+            },
+            data: {
+                email: email || existingUser.email,
+                username: username || existingUser.username,
+                fullName: fullName || existingUser.fullName,
+                biography: biography || existingUser.biography,
+                birthDate: birthDate || existingUser.birthDate,
+                location: location || existingUser.location,
+                ...(newPassword && { password: hashedNewPassword }),
+            },
+        });
+
+        return NextResponse.json(
+            { user: updatedUser, message: 'User updated succsessfully' },
             { status: 201 }
         );
     } catch (e) {

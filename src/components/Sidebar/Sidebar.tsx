@@ -13,7 +13,7 @@ const Sidebar = () => {
     const path = usePathname();
     const router = useRouter();
     const [tokenUsername, setTokenUsername] = useState<string | undefined>(
-        '/user'
+        '/user/abc'
     );
 
     const getProfileUsername = async () => {

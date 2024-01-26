@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Image } from '@nextui-org/react';
 import {
+    CakeIcon,
     ClockIcon,
     MapIcon,
-    PaperAirplaneIcon,
     PencilIcon,
     PhotoIcon,
     XMarkIcon,
@@ -13,6 +13,9 @@ import {
 import formatTimestamp from '@/utils/formatTimesTamp';
 import { getSession } from 'next-auth/react';
 import UserType from '../../../types/user';
+import FollowUser from '@/components/userActions/FollowUser';
+import StartDM from '@/components/userActions/StartDM';
+import UpdateProfile from '@/components/Form/UpdateProfile';
 
 const UserPage = ({ params }: { params: { username: string } }) => {
     const [profileData, setProfileData] = useState<UserType>({
@@ -22,6 +25,8 @@ const UserPage = ({ params }: { params: { username: string } }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [bannerLoading, setBannerLoading] = useState(true);
     const [bannerUrl, setBannerUrl] = useState(``);
+
+    const [openedEditPopup, setOpenedEditPopup] = useState(false);
 
     const [avatarLoading, setAvatarLoading] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState(``);
@@ -42,12 +47,12 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                 },
             });
 
-            await new Promise<void>((resolve) => {
+            /*             await new Promise<void>((resolve) => {
                 setTimeout(() => {
                     console.log('alohas');
                     resolve(); // Resolve the promise after the timeout
                 }, 3000);
-            });
+            }); */
 
             // For delaying animation
             isVisitorOwner(params.username);
@@ -154,16 +159,20 @@ const UserPage = ({ params }: { params: { username: string } }) => {
         }
     };
 
+    const followUser = () => {
+        // Follows the user and handles if it is already followed
+    };
+
     return (
         <main className="flex min-h-screen flex-col">
             <div
-                className="absolute z-50"
+                className="absolute z-50 avatar-edit flex items-center justify-center"
                 style={{ height: '250px', paddingLeft: '150px', top: '350px' }}
             >
                 {!isOwner ? (
                     ''
                 ) : (
-                    <div className="avatar-edit-buttons fixed gap-x-4 flex">
+                    <div className="avatar-edit-buttons fixed gap-x-4 flex z-10">
                         <Button
                             variant="bordered"
                             color="secondary"
@@ -268,38 +277,33 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                     )}
                                 </h1>
                                 <div className="flex gap-x-4">
-                                    {isOwner === null ? (
+                                    {isOwner === null && (
                                         <span className="pulsating-span">
                                             Seguir doidadod
                                         </span>
-                                    ) : (
+                                    )}
+                                    {isOwner !== null && !isOwner && (
+                                        <FollowUser userData={profileData} />
+                                    )}
+                                    {isOwner !== null && isOwner && (
                                         <Button
-                                            variant={
-                                                isOwner ? 'ghost' : 'solid'
+                                            variant="ghost"
+                                            color="secondary"
+                                            style={{ lineHeight: '1.5' }}
+                                            onClick={() =>
+                                                setOpenedEditPopup(true)
                                             }
-                                            color={
-                                                isOwner
-                                                    ? 'secondary'
-                                                    : 'primary'
+                                            endContent={
+                                                <PencilIcon className="h-1/2" />
                                             }
                                         >
-                                            {isOwner
-                                                ? 'Editar Perfil'
-                                                : 'Seguir'}
+                                            Editar Perfil
                                         </Button>
                                     )}
-                                    {isOwner !== null ? (
-                                        !isOwner ? (
-                                            <Button
-                                                isIconOnly={true}
-                                                style={{ padding: '8px' }}
-                                            >
-                                                <PaperAirplaneIcon />
-                                            </Button>
-                                        ) : (
-                                            ''
-                                        )
-                                    ) : (
+                                    {isOwner !== null && !isOwner && (
+                                        <StartDM />
+                                    )}
+                                    {isOwner === null && (
                                         <span className="pulsating-span">
                                             Place
                                         </span>
@@ -357,10 +361,90 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                     </p>
                                 </div>
                             </div>
+                            <div className="pt-6">
+                                <ul
+                                    style={{ color: '#333' }}
+                                    className="gap-y-3 grid"
+                                >
+                                    {!profileData.biography ? (
+                                        ''
+                                    ) : (
+                                        <li
+                                            style={{ maxHeight: '50px' }}
+                                            className="flex items-center gap-x-2"
+                                        >
+                                            <div style={{ height: '26px' }}>
+                                                <PencilIcon
+                                                    className="h-full"
+                                                    style={{ padding: '2px' }}
+                                                />
+                                            </div>
+                                            {profileData.biography}
+                                        </li>
+                                    )}
+                                    {!profileData.birthDate ? (
+                                        ''
+                                    ) : (
+                                        <li
+                                            style={{ maxHeight: '50px' }}
+                                            className="flex items-center gap-x-2"
+                                        >
+                                            <div style={{ height: '26px' }}>
+                                                <CakeIcon
+                                                    className="h-full"
+                                                    style={{ padding: '2px' }}
+                                                />
+                                            </div>
+                                            {`Nasceu em ${formatTimestamp(
+                                                profileData.birthDate
+                                            )}`}
+                                        </li>
+                                    )}
+                                    {!profileData.location ? (
+                                        ''
+                                    ) : (
+                                        <li
+                                            style={{ maxHeight: '50px' }}
+                                            className="flex items-center gap-x-2"
+                                        >
+                                            <div style={{ height: '26px' }}>
+                                                <MapIcon className="h-full" />
+                                            </div>
+                                            {profileData.location}
+                                        </li>
+                                    )}
+                                    {profileData.createdAt ? (
+                                        <li
+                                            style={{ maxHeight: '50px' }}
+                                            className="flex items-center gap-x-2"
+                                        >
+                                            <div style={{ height: '26px' }}>
+                                                <ClockIcon className="h-full" />
+                                            </div>
+                                            {`Entrou em ${formatTimestamp(
+                                                profileData.createdAt
+                                            )}`}
+                                        </li>
+                                    ) : (
+                                        <span className="pulsating-span">
+                                            Entrou em 20 de 20 de 2000
+                                        </span>
+                                    )}
+                                    {profileData.createdAt ? (
+                                        ''
+                                    ) : (
+                                        <span className="pulsating-span">
+                                            Entrou em 20 de 20 de 2000
+                                        </span>
+                                    )}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Hidden components that are activated via functions */}
             <input
                 type="file"
                 ref={fileInputRef}
@@ -368,6 +452,18 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                 onChange={(e) => handleImageUpload(e, currentUploadType)}
                 accept="image/*"
             />
+            {!profileData.username ? (
+                ''
+            ) : (
+                <UpdateProfile
+                    isActive={openedEditPopup}
+                    setIsActive={setOpenedEditPopup}
+                    userData={profileData}
+                    handleProfileUpdate={() => {
+                        fetchUserData(params.username);
+                    }}
+                ></UpdateProfile>
+            )}
         </main>
     );
 };

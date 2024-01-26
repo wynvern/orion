@@ -44,8 +44,14 @@ export const POST = async (req: Request) => {
             );
         }
 
-        // Use the fs module to write the PNG image data to the file
-        require('fs').writeFileSync(filePath, pngImageData);
+        await sharp(pngImageData)
+            .resize({
+                width: 500,
+                height: 500,
+                fit: 'cover',
+                position: 'centre',
+            })
+            .toFile(filePath);
 
         return NextResponse.json(
             {

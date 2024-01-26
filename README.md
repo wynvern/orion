@@ -7,3 +7,7 @@ yarn install
 
 npx prisma generate
 ```
+
+## To-Do
+
+-   [] redirect should be via middleware for speed purposes.
