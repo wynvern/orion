@@ -26,7 +26,7 @@ const Sidebar = () => {
     }, []);
 
     return (
-        <div className="h-full flex items-center justify-center p-5 border-r">
+        <div className="h-full w-full flex items-center justify-center p-5 border-r">
             <nav>
                 <ul className="grid gap-y-6">
                     <li>

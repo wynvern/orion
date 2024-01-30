@@ -16,7 +16,7 @@
     --bg: #0a0a0a;
     --fg: white;
     --border: #333;
-    --anim-speed: 0.1s
+    --anim-speed: 0.1s;
 }
 
 body {
@@ -47,6 +47,11 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.border-radius-sys {
+    border: none;
+    border-radius: 23px;
 }
 
 .border-d {
@@ -93,7 +98,7 @@ input:-webkit-autofill:active {
 }
 
 .image-edit:hover .image-img {
-    filter: brightness(50%)
+    filter: brightness(50%);
 }
 
 .avatar-banner {
@@ -154,7 +159,6 @@ input:-webkit-autofill:active {
 .pulsating-span:nth-child(0) {
     animation-delay: 1s;
 }
-
 
 .active-popup {
     opacity: 1 !important;

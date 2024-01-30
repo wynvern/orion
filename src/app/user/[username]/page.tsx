@@ -173,56 +173,7 @@ const UserPage = ({ params }: { params: { username: string } }) => {
             <div
                 className="absolute z-50"
                 style={{ paddingLeft: '150px', top: '350px' }}
-            >
-                <div
-                    className="avatar-edit flex items-center justify-center"
-                    style={{ height: '250px' }}
-                >
-                    {!isOwner ? (
-                        ''
-                    ) : (
-                        <div className="avatar-edit-buttons absolute gap-x-4 flex z-10">
-                            <Button
-                                variant="bordered"
-                                color="secondary"
-                                isIconOnly={true}
-                                style={{ padding: '6px' }}
-                            >
-                                <XMarkIcon />
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    setCurrentUploadType('avatar');
-                                    handleFileSelect();
-                                }}
-                                variant="bordered"
-                                color="secondary"
-                                isIconOnly={true}
-                                style={{ padding: '6px' }}
-                            >
-                                <PhotoIcon />
-                            </Button>
-                        </div>
-                    )}
-                    {avatarUrl ? (
-                        <Image
-                            alt="default"
-                            isLoading={avatarLoading}
-                            src={avatarUrl}
-                            className={`border-d ${
-                                isOwner ? 'avatar-img' : ''
-                            }`}
-                            style={{ maxWidth: 'auto', height: '100%' }}
-                            removeWrapper={true}
-                        ></Image>
-                    ) : (
-                        <div
-                            className="pulsating-span"
-                            style={{ aspectRatio: '1 / 1', height: '100%' }}
-                        ></div>
-                    )}
-                </div>
-            </div>
+            ></div>
 
             <div
                 className="w-full border-b image-edit flex items-center justify-center"
@@ -272,120 +223,174 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                     removeWrapper={true}
                 ></Image>
             </div>
-            <div className="w-full">
-                <div
-                    className="flex pt-6"
-                    style={{ paddingLeft: '450px', paddingRight: '150px' }}
-                >
+
+            <div className="">
+                <div className="flex pt-6 2xl:px-60 lg:px-40 md:px-10 sm:px-6">
+                    <div className="w-40 h-40 mr-6">
+                        <div className="avatar-edit flex items-center justify-center h-full w-full">
+                            {!isOwner ? (
+                                ''
+                            ) : (
+                                <div className="avatar-edit-buttons absolute gap-x-4 flex z-10">
+                                    <Button
+                                        variant="bordered"
+                                        color="secondary"
+                                        isIconOnly={true}
+                                        style={{ padding: '6px' }}
+                                    >
+                                        <XMarkIcon />
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
+                                            setCurrentUploadType('avatar');
+                                            handleFileSelect();
+                                        }}
+                                        variant="bordered"
+                                        color="secondary"
+                                        isIconOnly={true}
+                                        style={{ padding: '6px' }}
+                                    >
+                                        <PhotoIcon />
+                                    </Button>
+                                </div>
+                            )}
+                            {avatarUrl ? (
+                                <Image
+                                    alt="default"
+                                    isLoading={avatarLoading}
+                                    src={avatarUrl}
+                                    className={`border-d ${
+                                        isOwner ? 'avatar-img' : ''
+                                    }`}
+                                    style={{ maxWidth: 'auto', height: '100%' }}
+                                    removeWrapper={true}
+                                ></Image>
+                            ) : (
+                                <div
+                                    className="pulsating-span"
+                                    style={{
+                                        aspectRatio: '1 / 1',
+                                        height: '100%',
+                                    }}
+                                ></div>
+                            )}
+                        </div>
+                    </div>
+
                     <div className="flex items-end justify-between grow">
                         <div className="w-full">
-                            <div className="w-full flex justify-between items-center">
-                                <h1>
-                                    {!profileData.username ? (
+                            <div className="h-40">
+                                {/* Div to make the content be same height as image */}
+                                <div className="w-full flex justify-between items-center">
+                                    <h1>
+                                        {!profileData.username ? (
+                                            <span className="pulsating-span">
+                                                usernamereal
+                                            </span>
+                                        ) : (
+                                            profileData.username
+                                        )}
+                                    </h1>
+                                    <div className="flex gap-x-4">
+                                        {isOwner === null && (
+                                            <span className="pulsating-span">
+                                                Seguir doidadod
+                                            </span>
+                                        )}
+                                        {isOwner !== null && !isOwner && (
+                                            <FollowUser
+                                                userData={profileData}
+                                            />
+                                        )}
+                                        {isOwner !== null && isOwner && (
+                                            <Button
+                                                variant="ghost"
+                                                color="secondary"
+                                                style={{ lineHeight: '1.5' }}
+                                                onClick={() =>
+                                                    setOpenedEditPopup(true)
+                                                }
+                                                endContent={
+                                                    <PencilIcon className="h-1/2" />
+                                                }
+                                            >
+                                                Editar Perfil
+                                            </Button>
+                                        )}
+                                        {isOwner !== null && !isOwner && (
+                                            <StartDM />
+                                        )}
+                                        {isOwner === null && (
+                                            <span className="pulsating-span">
+                                                Place
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                                <p className="pt-1">
+                                    {profileData.fullName === undefined ? (
                                         <span className="pulsating-span">
-                                            usernamereallylong
+                                            usernamereall
                                         </span>
+                                    ) : profileData.fullName ? (
+                                        profileData.fullName
                                     ) : (
-                                        profileData.username
+                                        ''
                                     )}
-                                </h1>
-                                <div className="flex gap-x-4">
-                                    {isOwner === null && (
-                                        <span className="pulsating-span">
-                                            Seguir doidadod
-                                        </span>
-                                    )}
-                                    {isOwner !== null && !isOwner && (
-                                        <FollowUser userData={profileData} />
-                                    )}
-                                    {isOwner !== null && isOwner && (
-                                        <Button
-                                            variant="ghost"
-                                            color="secondary"
-                                            style={{ lineHeight: '1.5' }}
-                                            onClick={() =>
-                                                setOpenedEditPopup(true)
-                                            }
-                                            endContent={
-                                                <PencilIcon className="h-1/2" />
-                                            }
-                                        >
-                                            Editar Perfil
-                                        </Button>
-                                    )}
-                                    {isOwner !== null && !isOwner && (
-                                        <StartDM />
-                                    )}
-                                    {isOwner === null && (
-                                        <span className="pulsating-span">
-                                            Place
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                            <p className="pt-1">
-                                {profileData.fullName === undefined ? (
-                                    <span className="pulsating-span">
-                                        usernamereall
-                                    </span>
-                                ) : profileData.fullName ? (
-                                    profileData.fullName
-                                ) : (
-                                    ''
-                                )}
-                            </p>
-                            <div className="flex mt-4 gap-x-4 w-full">
-                                <div className="flex">
-                                    <Link color="secondary">
-                                        <p
-                                            onClick={() =>
-                                                setFollowerPopup(true)
-                                            }
-                                        >
-                                            {profileData.following ? (
-                                                <>
-                                                    <b>
-                                                        {
-                                                            profileData
-                                                                .following
-                                                                .length
-                                                        }
-                                                    </b>{' '}
-                                                    Seguidores
-                                                </>
-                                            ) : (
-                                                <span className="pulsating-span">
-                                                    0 Seguindo
-                                                </span>
-                                            )}
-                                        </p>
-                                    </Link>
-                                </div>
-                                <div className="flex">
-                                    <Link color="secondary">
-                                        <p
-                                            onClick={() =>
-                                                setFollowingPopup(true)
-                                            }
-                                        >
-                                            {profileData.followers ? (
-                                                <>
-                                                    <b>
-                                                        {
-                                                            profileData
-                                                                .followers
-                                                                .length
-                                                        }
-                                                    </b>{' '}
-                                                    Seguindo
-                                                </>
-                                            ) : (
-                                                <span className="pulsating-span">
-                                                    0 Seguindo
-                                                </span>
-                                            )}
-                                        </p>
-                                    </Link>
+                                </p>
+                                <div className="flex mt-6 gap-x-4 w-full">
+                                    <div className="flex">
+                                        <Link color="secondary">
+                                            <p
+                                                onClick={() =>
+                                                    setFollowerPopup(true)
+                                                }
+                                            >
+                                                {profileData.following ? (
+                                                    <>
+                                                        <b>
+                                                            {
+                                                                profileData
+                                                                    .following
+                                                                    .length
+                                                            }
+                                                        </b>{' '}
+                                                        Seguidores
+                                                    </>
+                                                ) : (
+                                                    <span className="pulsating-span">
+                                                        0 Seguindo
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </Link>
+                                    </div>
+                                    <div className="flex">
+                                        <Link color="secondary">
+                                            <p
+                                                onClick={() =>
+                                                    setFollowingPopup(true)
+                                                }
+                                            >
+                                                {profileData.followers ? (
+                                                    <>
+                                                        <b>
+                                                            {
+                                                                profileData
+                                                                    .followers
+                                                                    .length
+                                                            }
+                                                        </b>{' '}
+                                                        Seguindo
+                                                    </>
+                                                ) : (
+                                                    <span className="pulsating-span">
+                                                        0 Seguindo
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                             <div className="pt-6">
