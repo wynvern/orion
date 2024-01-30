@@ -5,7 +5,6 @@ import * as fs from 'fs/promises';
 import path from 'path';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import UserType from '@/types/user';
 
 export const POST = async (req: Request) => {
     try {

@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth';
 
 export const GET = async (
     req: Request,
-    { params }: { params: { username: string } }
+    { params }: { params: { uuid: string } }
 ) => {
     try {
         const session = await getServerSession(authOptions);
@@ -21,14 +21,14 @@ export const GET = async (
             );
         }
 
-        const username = params.username;
+        const uuid = params.uuid;
 
-        if (!username) {
+        if (!uuid) {
             return NextResponse.json(
                 {
                     user: null,
-                    message: 'Username not provided',
-                    type: 'user-not-provided',
+                    message: 'uuid not provided',
+                    type: 'uuid-not-provided',
                 },
                 { status: 400 }
             );
@@ -36,7 +36,7 @@ export const GET = async (
 
         const userFetched = await db.user.findUnique({
             where: {
-                username: username,
+                id: uuid,
             },
             include: {
                 followers: true,
@@ -47,7 +47,7 @@ export const GET = async (
             return NextResponse.json(
                 {
                     user: null,
-                    message: 'Username not found',
+                    message: 'User not found',
                     type: 'user-not-found',
                 },
                 { status: 404 }

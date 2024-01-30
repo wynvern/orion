@@ -4,6 +4,7 @@ import * as fs from 'fs/promises';
 
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
+import path from 'path';
 
 export const POST = async (req: Request) => {
     try {
@@ -61,6 +62,55 @@ export const POST = async (req: Request) => {
             { status: 200 }
         );
     } catch (e) {
+        return Response.json(
+            { message: 'Something went wrong...' },
+            { status: 500 }
+        );
+    }
+};
+
+export const DELETE = async (req: Request) => {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session) {
+            return NextResponse.json(
+                {
+                    message: 'Not authorized',
+                    type: 'Missing authorization',
+                },
+                { status: 401 }
+            );
+        }
+
+        const avatarFolderPath = path.join(
+            process.cwd(),
+            'public',
+            'uploads',
+            'avatars',
+            session.user.id
+        );
+        await fs.mkdir(avatarFolderPath, { recursive: true });
+
+        const defaultImagePath = path.join(
+            process.cwd(),
+            'public',
+            'static',
+            'default',
+            'avatarDefault.png'
+        );
+        const userImagePath = path.join(avatarFolderPath, 'original.png');
+        await fs.copyFile(defaultImagePath, userImagePath);
+
+        return NextResponse.json(
+            {
+                uuid: session.user.id,
+                message: 'Avatar restored to default successfully',
+            },
+            { status: 200 }
+        );
+    } catch (e) {
+        console.log(e);
         return Response.json(
             { message: 'Something went wrong...' },
             { status: 500 }

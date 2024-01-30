@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Button, Image } from '@nextui-org/react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
+import { Button, Image, Link } from '@nextui-org/react';
 import {
     CakeIcon,
     ClockIcon,
@@ -16,6 +16,9 @@ import UserType from '../../../types/user';
 import FollowUser from '@/components/userActions/FollowUser';
 import StartDM from '@/components/userActions/StartDM';
 import UpdateProfile from '@/components/Form/UpdateProfile';
+import FollowingList from '@/components/Form/FollowingList';
+import { Session } from 'next-auth';
+import FollowerList from '@/components/Form/FollowerList';
 
 const UserPage = ({ params }: { params: { username: string } }) => {
     const [profileData, setProfileData] = useState<UserType>({
@@ -25,8 +28,12 @@ const UserPage = ({ params }: { params: { username: string } }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [bannerLoading, setBannerLoading] = useState(true);
     const [bannerUrl, setBannerUrl] = useState(``);
+    const [session, setSession] = useState<Session | null>();
 
     const [openedEditPopup, setOpenedEditPopup] = useState(false);
+
+    const [followerPopup, setFollowerPopup] = useState(false);
+    const [followingPopup, setFollowingPopup] = useState(false);
 
     const [avatarLoading, setAvatarLoading] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState(``);
@@ -35,12 +42,13 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
     const isVisitorOwner = async (username: string) => {
         const session = await getSession();
+        setSession(session);
         setIsOwner(session?.user.username == username);
     };
 
     const fetchUserData = async (username: string) => {
         try {
-            const response = await fetch(`/api/user/${username}`, {
+            const response = await fetch(`/api/search/user/${username}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,7 +70,7 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
                 // banner
                 setBannerUrl(
-                    `http://localhost:3000/api/images/banner/${
+                    `http://localhost:3000/api/image/banner/${
                         data.user.id
                     }?timestamp=${Date.now()}`
                 );
@@ -70,12 +78,11 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
                 // avatar
                 setAvatarUrl(
-                    `http://localhost:3000/api/images/avatar/${
+                    `http://localhost:3000/api/image/avatar/${
                         data.user.id
                     }?timestamp=${Date.now()}`
                 );
                 setAvatarLoading(false);
-
                 setProfileData(data.user);
             }
         } catch (e: any) {
@@ -85,6 +92,7 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
     useEffect(() => {
         fetchUserData(params.username);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params.username]);
 
     const handleFileSelect = async () => {
@@ -115,25 +123,22 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                             const dataSend = JSON.stringify({
                                 image: base64Image,
                             });
-                            const response = await fetch(
-                                `/api/images/${type}`,
-                                {
-                                    method: 'POST',
-                                    body: dataSend,
-                                }
-                            );
+                            const response = await fetch(`/api/image/${type}`, {
+                                method: 'POST',
+                                body: dataSend,
+                            });
 
                             if (response.ok) {
                                 if (type === 'banner') {
                                     setBannerUrl(
-                                        `http://localhost:3000/api/images/banner/${
+                                        `http://localhost:3000/api/image/banner/${
                                             profileData.id
                                         }?timestamp=${Date.now()}`
                                     );
                                     setBannerLoading(false);
                                 } else {
                                     setAvatarUrl(
-                                        `http://localhost:3000/api/images/avatar/${
+                                        `http://localhost:3000/api/image/avatar/${
                                             profileData.id
                                         }?timestamp=${Date.now()}`
                                     );
@@ -166,50 +171,57 @@ const UserPage = ({ params }: { params: { username: string } }) => {
     return (
         <main className="flex min-h-screen flex-col">
             <div
-                className="absolute z-50 avatar-edit flex items-center justify-center"
-                style={{ height: '250px', paddingLeft: '150px', top: '350px' }}
+                className="absolute z-50"
+                style={{ paddingLeft: '150px', top: '350px' }}
             >
-                {!isOwner ? (
-                    ''
-                ) : (
-                    <div className="avatar-edit-buttons fixed gap-x-4 flex z-10">
-                        <Button
-                            variant="bordered"
-                            color="secondary"
-                            isIconOnly={true}
-                            style={{ padding: '6px' }}
-                        >
-                            <XMarkIcon />
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                setCurrentUploadType('avatar');
-                                handleFileSelect();
-                            }}
-                            variant="bordered"
-                            color="secondary"
-                            isIconOnly={true}
-                            style={{ padding: '6px' }}
-                        >
-                            <PhotoIcon />
-                        </Button>
-                    </div>
-                )}
-                {avatarUrl ? (
-                    <Image
-                        alt="default"
-                        isLoading={avatarLoading}
-                        src={avatarUrl}
-                        className="border-d"
-                        style={{ maxWidth: 'auto', height: '100%' }}
-                        removeWrapper={true}
-                    ></Image>
-                ) : (
-                    <div
-                        className="pulsating-span"
-                        style={{ aspectRatio: '1 / 1', height: '100%' }}
-                    ></div>
-                )}
+                <div
+                    className="avatar-edit flex items-center justify-center"
+                    style={{ height: '250px' }}
+                >
+                    {!isOwner ? (
+                        ''
+                    ) : (
+                        <div className="avatar-edit-buttons absolute gap-x-4 flex z-10">
+                            <Button
+                                variant="bordered"
+                                color="secondary"
+                                isIconOnly={true}
+                                style={{ padding: '6px' }}
+                            >
+                                <XMarkIcon />
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    setCurrentUploadType('avatar');
+                                    handleFileSelect();
+                                }}
+                                variant="bordered"
+                                color="secondary"
+                                isIconOnly={true}
+                                style={{ padding: '6px' }}
+                            >
+                                <PhotoIcon />
+                            </Button>
+                        </div>
+                    )}
+                    {avatarUrl ? (
+                        <Image
+                            alt="default"
+                            isLoading={avatarLoading}
+                            src={avatarUrl}
+                            className={`border-d ${
+                                isOwner ? 'avatar-img' : ''
+                            }`}
+                            style={{ maxWidth: 'auto', height: '100%' }}
+                            removeWrapper={true}
+                        ></Image>
+                    ) : (
+                        <div
+                            className="pulsating-span"
+                            style={{ aspectRatio: '1 / 1', height: '100%' }}
+                        ></div>
+                    )}
+                </div>
             </div>
 
             <div
@@ -250,6 +262,7 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                     alt="default"
                     isLoading={bannerLoading}
                     src={bannerUrl}
+                    className={isOwner ? 'image-img' : ''}
                     style={{
                         width: '100%',
                         height: 'auto',
@@ -323,42 +336,56 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                             </p>
                             <div className="flex mt-4 gap-x-4 w-full">
                                 <div className="flex">
-                                    <p>
-                                        {profileData.followers ? (
-                                            <>
-                                                <b>
-                                                    {
-                                                        profileData.followers
-                                                            .length
-                                                    }
-                                                </b>{' '}
-                                                Seguidores
-                                            </>
-                                        ) : (
-                                            <span className="pulsating-span">
-                                                0 Seguindo
-                                            </span>
-                                        )}
-                                    </p>
+                                    <Link color="secondary">
+                                        <p
+                                            onClick={() =>
+                                                setFollowerPopup(true)
+                                            }
+                                        >
+                                            {profileData.following ? (
+                                                <>
+                                                    <b>
+                                                        {
+                                                            profileData
+                                                                .following
+                                                                .length
+                                                        }
+                                                    </b>{' '}
+                                                    Seguidores
+                                                </>
+                                            ) : (
+                                                <span className="pulsating-span">
+                                                    0 Seguindo
+                                                </span>
+                                            )}
+                                        </p>
+                                    </Link>
                                 </div>
                                 <div className="flex">
-                                    <p>
-                                        {profileData.following ? (
-                                            <>
-                                                <b>
-                                                    {
-                                                        profileData.following
-                                                            .length
-                                                    }
-                                                </b>{' '}
-                                                Seguindo
-                                            </>
-                                        ) : (
-                                            <span className="pulsating-span">
-                                                0 Seguindo
-                                            </span>
-                                        )}
-                                    </p>
+                                    <Link color="secondary">
+                                        <p
+                                            onClick={() =>
+                                                setFollowingPopup(true)
+                                            }
+                                        >
+                                            {profileData.followers ? (
+                                                <>
+                                                    <b>
+                                                        {
+                                                            profileData
+                                                                .followers
+                                                                .length
+                                                        }
+                                                    </b>{' '}
+                                                    Seguindo
+                                                </>
+                                            ) : (
+                                                <span className="pulsating-span">
+                                                    0 Seguindo
+                                                </span>
+                                            )}
+                                        </p>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="pt-6">
@@ -463,6 +490,24 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                         fetchUserData(params.username);
                     }}
                 ></UpdateProfile>
+            )}
+            {profileData.username ? (
+                <FollowingList
+                    isActive={followingPopup}
+                    setIsActive={setFollowingPopup}
+                    userData={profileData}
+                />
+            ) : (
+                ''
+            )}
+            {profileData.username ? (
+                <FollowerList
+                    isActive={followerPopup}
+                    setIsActive={setFollowerPopup}
+                    userData={profileData}
+                />
+            ) : (
+                ''
             )}
         </main>
     );

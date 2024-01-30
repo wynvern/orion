@@ -15,21 +15,74 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
-    const [usernameIsInvalid, setUsernameIsInvalid] = useState(false);
-    const [emailIsInvalid, setEmailIsInvalid] = useState(false);
-    const [passwordIsInvalid, setPasswordIsInvalid] = useState(false);
+
+    const [usernameIsInvalid, setUsernameIsInvalid] = useState({
+        bool: false,
+        message: '',
+    });
+    const [emailIsInvalid, setEmailIsInvalid] = useState({
+        bool: false,
+        message: '',
+    });
+    const [passwordIsInvalid, setPasswordIsInvalid] = useState({
+        bool: false,
+        message: '',
+    });
+
     const [buttonLoading, setButtonLoading] = useState(false);
     const router = useRouter();
+
+    const verifyInputs = () => {
+        if (username.length > 20) {
+            setUsernameIsInvalid({
+                bool: true,
+                message:
+                    'O nome de usuário não pode ter mais que 20 carácteres',
+            });
+            return false;
+        }
+
+        if (!username) {
+            setUsernameIsInvalid({
+                bool: true,
+                message: 'Este campo é obrigatório',
+            });
+            return false;
+        }
+
+        if (username.includes(' ')) {
+            // Check for other special characters
+            setUsernameIsInvalid({
+                bool: true,
+                message: 'O nome de usuário não pode ter caractéres especiais',
+            });
+            return false;
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            setEmailIsInvalid({
+                bool: true,
+                message: 'Email inválido',
+            });
+            return false;
+        }
+
+        if (password.length < 8) {
+            setPasswordIsInvalid({
+                bool: true,
+                message: 'A senha precisa ter no mínimo 8 carácteres',
+            });
+            return false;
+        }
+
+        return true;
+    };
 
     const handleLogin = async () => {
         try {
             setButtonLoading(true);
-
-            // Password validation
-            if (password.length < 8) {
-                setPasswordIsInvalid(true);
-                return; // Don't proceed with the login if the password is too short
-            }
+            const inputVal = verifyInputs();
+            if (!inputVal) return false;
 
             const response = await fetch('/api/user', {
                 method: 'POST',
@@ -56,15 +109,7 @@ const Login = () => {
                     }
                 }, 1000);
             } else {
-                const responsePretty = await response.json();
-
-                if (responsePretty.type === 'username-in-use') {
-                    console.log('Username already in use');
-                    setUsernameIsInvalid(true);
-                } else if (responsePretty.type === 'email-in-use') {
-                    console.log('Email already in use');
-                    setEmailIsInvalid(true);
-                }
+                const responsePretty = await response.json(); // Something?
             }
         } catch (e: any) {
             console.error('Error:', e.message);
@@ -74,8 +119,8 @@ const Login = () => {
     };
 
     return (
-        <div className="flex w-full h-lvh items-center justify-center">
-            <div className="border-d h-3/4 w-2/3 flex">
+        <div className="flex w-full h-lvh items-center justify-center py-6">
+            <div className="border-d h-full w-2/3 flex">
                 <div className="w-1/2 h-full p-5">
                     <div className="w-full flex items-center flex-col mt-10">
                         <h1>Crie uma Conta</h1>
@@ -93,15 +138,14 @@ const Login = () => {
                                 variant="bordered"
                                 classNames={{ inputWrapper: 'border-color' }}
                                 startContent={<UserIcon className="h-1/2" />}
-                                isInvalid={usernameIsInvalid}
-                                errorMessage={
-                                    usernameIsInvalid
-                                        ? 'O nome de usuário escolhido está em uso.'
-                                        : undefined
-                                }
+                                isInvalid={usernameIsInvalid.bool}
+                                errorMessage={usernameIsInvalid.message}
                                 onValueChange={(e) => {
                                     setUsername(e);
-                                    setUsernameIsInvalid(false); // Remove the warning when the user changes the input
+                                    setUsernameIsInvalid({
+                                        message: '',
+                                        bool: false,
+                                    }); // Remove the warning when the user changes the input
                                 }}
                             />
                         </div>
@@ -116,14 +160,14 @@ const Login = () => {
                                 startContent={
                                     <AtSymbolIcon className="h-1/2" />
                                 }
-                                errorMessage={
-                                    emailIsInvalid
-                                        ? 'Este email já está em uso.'
-                                        : undefined
-                                }
+                                isInvalid={emailIsInvalid.bool}
+                                errorMessage={emailIsInvalid.message}
                                 onValueChange={(e) => {
                                     setEmail(e);
-                                    setEmailIsInvalid(false); // Remove the warning when the user changes the input
+                                    setEmailIsInvalid({
+                                        message: '',
+                                        bool: false,
+                                    }); // Remove the warning when the user changes the input
                                 }}
                             />
                         </div>
@@ -134,17 +178,16 @@ const Login = () => {
                                 variant="bordered"
                                 isClearable={true}
                                 value={password}
-                                isInvalid={passwordIsInvalid}
+                                isInvalid={passwordIsInvalid.bool}
                                 classNames={{ inputWrapper: 'border-color' }}
                                 startContent={<KeyIcon className="h-1/2" />}
-                                errorMessage={
-                                    passwordIsInvalid
-                                        ? 'A senha deve ter no mínimo 8 caracteres.'
-                                        : undefined
-                                }
+                                errorMessage={passwordIsInvalid.message}
                                 onValueChange={(e) => {
                                     setPassword(e);
-                                    setPasswordIsInvalid(false); // Remove the warning when the user changes the input
+                                    setPasswordIsInvalid({
+                                        message: '',
+                                        bool: false,
+                                    }); // Remove the warning when the user changes the input
                                 }}
                             />
                         </div>

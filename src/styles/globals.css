@@ -2,10 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+    Imports from different stuff
+*/
+
+@import url('./scrollbar.css');
+
+/*
+    Actual code
+*/
+
 * {
     --bg: #0a0a0a;
     --fg: white;
     --border: #333;
+    --anim-speed: 0.1s
 }
 
 body {
@@ -72,6 +83,19 @@ input:-webkit-autofill:active {
     visibility: hidden;
 }
 
+.image-edit-buttons {
+    visibility: hidden;
+    transition: var(--anim-speed) ease-in-out;
+}
+
+.image-img {
+    transition: var(--anim-speed) ease-in-out;
+}
+
+.image-edit:hover .image-img {
+    filter: brightness(50%)
+}
+
 .avatar-banner {
     z-index: 1;
 }
@@ -83,6 +107,19 @@ input:-webkit-autofill:active {
 .avatar-edit-buttons {
     z-index: 100;
     visibility: hidden;
+}
+
+.avatar-edit:hover .avatar-img {
+    filter: brightness(50%);
+}
+
+.avatar-img {
+    transition: var(--anim-speed) ease-in-out;
+}
+
+.avatar-edit-buttons {
+    visibility: hidden;
+    transition: var(--anim-speed) ease-in-out;
 }
 
 /*
@@ -116,4 +153,9 @@ input:-webkit-autofill:active {
 
 .pulsating-span:nth-child(0) {
     animation-delay: 1s;
+}
+
+
+.active-popup {
+    opacity: 1 !important;
 }

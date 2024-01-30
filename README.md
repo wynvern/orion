@@ -11,3 +11,5 @@ npx prisma generate
 ## To-Do
 
 -   [] redirect should be via middleware for speed purposes.
+-   [] route /search should in the future be used to search for similarity and not exact match
+-   [] stop passwords from FUCKING LEAKING
