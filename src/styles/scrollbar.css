@@ -1,12 +1,16 @@
 ::-webkit-scrollbar {
-    width: 12px;
-    position: fixed;
+    width: 8px;
+    display: block;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--border);
+    background-color: #222;
     transition: var(anim-speed) ease-in-out;
     border-radius: 23px;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: var(--border);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -14,5 +18,7 @@
 }
 
 ::-webkit-scrollbar-track {
+    position: fixed;
+
     background-color: transparent;
 }

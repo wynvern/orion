@@ -21,25 +21,27 @@ export const POST = async (req: Request) => {
         }
 
         const body = await req.json();
-        const { content } = body;
+        const { text, images } = body;
 
-        if (!content) {
+        console.log(images);
+
+        if (!text) {
             return Response.json(
-                { message: 'Missing variables...' },
+                { message: 'Missing text...' },
                 { status: 400 }
             );
         }
 
-        if (content.length > 200) {
+        if (text.length > 200) {
             return Response.json(
-                { message: 'Message content too long...' },
+                { message: 'Message text too long...' },
                 { status: 400 }
             );
         }
 
         const newPost = await db.post.create({
             data: {
-                content: content,
+                content: text,
                 userId: session.user.id,
             },
         });

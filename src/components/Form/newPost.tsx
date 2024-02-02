@@ -1,12 +1,21 @@
-import { useState } from 'react';
-import { PencilIcon } from '@heroicons/react/24/solid';
-import { Textarea } from '@nextui-org/react';
-import { Button } from '@nextui-org/react';
+import React, { useRef, useState } from 'react';
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    Textarea,
+    Link,
+    Image,
+} from '@nextui-org/react';
+import { PencilIcon, PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 interface NewPostProps {
     isActive: boolean;
     setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
-    handleCreatePost: () => void; // Change the name of the function
+    handleCreatePost: () => void;
 }
 
 const CreatePost: React.FC<NewPostProps> = ({
@@ -16,13 +25,33 @@ const CreatePost: React.FC<NewPostProps> = ({
 }) => {
     const [newPostContent, setNewPostContent] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
+    const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+
+        if (uploadedImages.length > 4) {
+            return false;
+        }
+
+        if (files) {
+            const imageUrls = Array.from(files).map((file) =>
+                URL.createObjectURL(file)
+            );
+            setUploadedImages((prevImages) => [...prevImages, ...imageUrls]);
+        }
+    };
 
     const createPost = async () => {
         try {
             setIsLoading(true);
             const response = await fetch('/api/post', {
                 method: 'POST',
-                body: JSON.stringify({ content: newPostContent }),
+                body: JSON.stringify({
+                    text: newPostContent,
+                    images: uploadedImages,
+                }),
             });
             if (response.ok) {
                 handleCreatePost();
@@ -36,80 +65,105 @@ const CreatePost: React.FC<NewPostProps> = ({
     };
 
     return (
-        <>
-            {isActive && (
-                <div
-                    style={{
-                        opacity: '0',
-                    }}
-                    className={`fixed inset-0 flex items-center justify-center z-50 py-6 ${
-                        isActive ? 'active-popup' : ''
-                    }`}
-                >
-                    {/* Background blur effect */}
-                    <div
-                        onClick={() => {
-                            setIsActive(false);
-                            setNewPostContent('');
-                        }}
-                        className="fixed inset-0 bg-black opacity-50"
-                    ></div>
-
-                    {/* Popup container */}
-                    <div
-                        className="border-d h-full lg:w-1/2 md:w-1/2 sm:w-2/3 flex flex-col justify-between  background-bg px-14 pb-10"
-                        style={{
-                            zIndex: '100',
-                        }}
-                    >
-                        <div className="w-full flex items-center flex-col mt-10">
-                            <h1>Nova postagem</h1>
-                        </div>
-                        <div
-                            className="flex flex-col flex-grow justify-between my-14"
-                            style={{ overflowY: 'auto' }}
-                        >
-                            <div className="mb-10">
-                                <Textarea
-                                    placeholder="Digite aqui..."
-                                    label="Conteúdo da postagem"
-                                    variant="bordered"
-                                    classNames={{
-                                        inputWrapper: 'border-color',
-                                    }}
-                                    value={newPostContent}
-                                    onValueChange={(e) => {
-                                        setNewPostContent(e);
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        <div className="flex justify-end gap-x-4">
-                            <Button
-                                size="lg"
-                                color="default"
-                                onClick={() => {
-                                    setIsActive(false);
-                                    setNewPostContent('');
+        <Modal
+            size="3xl"
+            isOpen={isActive}
+            onOpenChange={() => {
+                setIsActive(false);
+                setNewPostContent('');
+            }}
+            className="modal-style"
+            classNames={{
+                base: 'border-radius-sys lg:p-8 md:p-8 sm:p-6',
+                closeButton: 'transition-all mt-6 mr-6 active:scale-80',
+            }}
+        >
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1 pt-1">
+                            Nova postagem
+                        </ModalHeader>
+                        <ModalBody className="py-6">
+                            <Textarea
+                                placeholder="Digite aqui..."
+                                label="Conteúdo da postagem"
+                                variant="bordered"
+                                value={newPostContent}
+                                onValueChange={(e) => {
+                                    setNewPostContent(e);
                                 }}
+                            />
+
+                            <div
+                                className={`grid grid-cols-4 gap-4 ${
+                                    uploadedImages.length > 0 ? 'mt-6' : ''
+                                }`}
                             >
-                                Cancelar
-                            </Button>
+                                {uploadedImages.map((imageUrl, index) => (
+                                    <div key={index} className="relative">
+                                        <Button
+                                            size="sm"
+                                            onClick={() => {
+                                                setUploadedImages(
+                                                    (prevImages) =>
+                                                        prevImages.filter(
+                                                            (_, i) =>
+                                                                i !== index
+                                                        )
+                                                );
+                                            }}
+                                            isIconOnly={true}
+                                            className="absolute top-0 left-0 z-50 p-2 m-1"
+                                        >
+                                            <XMarkIcon className="h-1/1" />
+                                        </Button>
+                                        <Image
+                                            src={imageUrl}
+                                            alt={`Uploaded ${index}`}
+                                            className="max-w-full max-h-32 object-contain"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </ModalBody>
+                        <ModalFooter className="flex justify-between">
+                            <div className="h-full">
+                                <Button
+                                    isIconOnly={true}
+                                    variant="bordered"
+                                    color="secondary"
+                                    onClick={() =>
+                                        fileInputRef.current?.click()
+                                    }
+                                >
+                                    <PhotoIcon className="h-1/2" />
+                                </Button>
+                            </div>
                             <Button
-                                size="lg"
                                 color="primary"
-                                onClick={createPost}
+                                onClick={() => {
+                                    createPost();
+                                    onClose();
+                                }}
                                 style={{ lineHeight: '1.5' }}
                                 isLoading={isLoading}
                             >
                                 Criar Postagem
                                 <PencilIcon className="h-1/2" />
                             </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
+                        </ModalFooter>
+                    </>
+                )}
+            </ModalContent>
+            <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={(e) => handleFileChange(e)}
+                accept="image/*"
+            />
+        </Modal>
     );
 };
 

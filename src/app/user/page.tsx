@@ -25,7 +25,7 @@ const RedirectToUser = () => {
 
     return (
         // You might want to render something here, or you can leave it empty
-        <main className="flex min-h-screen flex-col">
+        <main className="flex h-full flex-col">
             <div className="h-full flex items-center justify-center">
                 Redirecting...
             </div>

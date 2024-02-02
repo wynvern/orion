@@ -1,17 +1,18 @@
 'use client';
 
 import CreatePost from '@/components/Form/newPost';
+import Header from '@/components/Header/Header';
 import { Post } from '@/types/post';
 import formatTimestamp from '@/utils/formatTimesTamp';
-import timeDifference from '@/utils/timeDifference';
+import { BookmarkIcon } from '@heroicons/react/24/outline';
 import {
     ArrowDownIcon,
     ArrowUpIcon,
-    BookmarkIcon,
     EllipsisHorizontalIcon,
     PencilIcon,
     PlusIcon,
     ShareIcon,
+    SparklesIcon,
     TrashIcon,
 } from '@heroicons/react/24/solid';
 import {
@@ -40,7 +41,8 @@ const keyMapping: Record<string, string> = {
 const Home = () => {
     const [newPostPopup, setNewPostPopup] = useState(false);
     const [session, setSession] = useState<Session | null>();
-    const [posts, setPosts] = useState({});
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [scrollY, setScrollY] = useState(0);
 
     const fetchPosts = async () => {
         try {
@@ -69,20 +71,24 @@ const Home = () => {
         executeLoad();
     }, []);
 
+    const handleScroll = (e) => {
+        setScrollY(e.target.scrollTop);
+    };
+
     const postsMapped = (dateKey: any) => {
         return posts[dateKey].map((post: Post) => (
             <React.Fragment key={post.id}>
                 <>
                     <div
                         key={post.id}
-                        className="border-d mb-10 p-6 flex flex-col w-full"
+                        className="border-d mb-10 sm:mb-6 lg:p-6 md:p-6 sm:p-4 sm:pt-6 flex flex-col w-full"
                     >
                         <div className="flex w-full">
                             <div className="h-20 w-20">
                                 <Image
                                     src={`/api/image/avatar/${post.user.id}`}
                                     alt="user profile"
-                                    className="border-d"
+                                    className="border-d z-0"
                                     removeWrapper={true}
                                     style={{
                                         height: '100%',
@@ -101,7 +107,9 @@ const Home = () => {
                                         </Link>
                                     </b>
                                     <p>•</p>
-                                    <p>{formatTimestamp(post.createdAt)}</p>
+                                    <p className="text-sm">
+                                        {formatTimestamp(post.createdAt)}
+                                    </p>
                                 </div>
                                 <p>{post.content}</p>
                             </div>
@@ -172,7 +180,7 @@ const Home = () => {
                                                     scale={0.1}
                                                     className="w-14"
                                                     style={{
-                                                        padding: '8px',
+                                                        padding: '10px',
                                                     }}
                                                 />
                                             }
@@ -193,29 +201,35 @@ const Home = () => {
                                                 scale={0.1}
                                                 className="w-14"
                                                 style={{
-                                                    padding: '8px',
+                                                    padding: '10px',
                                                 }}
                                             />
                                         }
                                     >
                                         Compartilhar
                                     </DropdownItem>
-                                    <DropdownItem
-                                        key="delete"
-                                        className="border-radius-sys text-danger"
-                                        description="Deletar post permanentemente"
-                                        startContent={
-                                            <TrashIcon
-                                                scale={0.1}
-                                                className="w-14"
-                                                style={{
-                                                    padding: '8px',
-                                                }}
-                                            />
-                                        }
-                                    >
-                                        Excluír
-                                    </DropdownItem>
+                                    {session?.user.id === post.user.id ? (
+                                        <DropdownItem
+                                            key="delete"
+                                            description="Delete este post"
+                                            className="border-radius-sys text-danger"
+                                            startContent={
+                                                <TrashIcon
+                                                    scale={0.1}
+                                                    className="w-14"
+                                                    style={{
+                                                        padding: '10px',
+                                                    }}
+                                                />
+                                            }
+                                        >
+                                            Deletar
+                                        </DropdownItem>
+                                    ) : (
+                                        <DropdownItem className="hidden">
+                                            asd
+                                        </DropdownItem>
+                                    )}
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
@@ -226,8 +240,12 @@ const Home = () => {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between pt-14 ">
-            <div className="fixed bottom-10 right-12">
+        <main className="flex h-full flex-col items-center justify-between">
+            <div className="lg:hidden md:hidden sm:block">
+                <Header scrollY={scrollY} />
+            </div>
+
+            <div className="fixed bottom-12 right-6 lg:bottom-12 md:bottom-12 sm:bottom-20 sm:pb-6 md:pb-0 lg:pb-0">
                 <Button
                     isIconOnly={true}
                     onClick={() => {
@@ -241,22 +259,36 @@ const Home = () => {
                 </Button>
             </div>
 
-            <div className="w-full px-60">
+            <div
+                className="w-full h-full lg:px-60 md:px-20 sm:px-2 n-scroll"
+                onScroll={(e) => handleScroll(e)}
+            >
+                <div className="h-20"></div>
                 {Object.keys(posts).map((dateKey) => (
                     <div key={dateKey}>
-                        {posts[dateKey].length > 0 && (
+                        {posts[dateKey].length > 0 ? (
                             <h2
-                                className={`flex justify-center mb-10 ${
-                                    dateKey !== 'hoje' ? 'mt-60' : ''
-                                }`}
+                                className={`flex justify-center mb-10 mt-20`}
                                 style={{ color: '#333' }}
                             >
                                 <b>{keyMapping[dateKey]}</b>
                             </h2>
+                        ) : (
+                            <div>
+                                {dateKey === 'hoje' ? (
+                                    <div className="w-full h-40 flex items-center justify-center flex-col p-6 mt-20">
+                                        <SparklesIcon className="h-20 mb-4" />
+                                        <b>Nenhum post novo para hoje</b>
+                                    </div>
+                                ) : (
+                                    ''
+                                )}
+                            </div>
                         )}
                         {postsMapped(dateKey)}
                     </div>
                 ))}
+                <div className="h-20"></div>
             </div>
 
             <CreatePost

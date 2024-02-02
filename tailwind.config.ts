@@ -12,6 +12,11 @@ const config: Config = {
     ],
     theme: {
         extend: {},
+        screens: {
+            sm: '300px',
+            md: '700px',
+            lg: '1300px',
+        },
     },
     darkMode: 'class',
     plugins: [

@@ -4,6 +4,7 @@ import { SetStateAction, useEffect, useRef, useState } from 'react';
 import { Button, Image, Link } from '@nextui-org/react';
 import {
     CakeIcon,
+    CalendarIcon,
     ClockIcon,
     MapIcon,
     PencilIcon,
@@ -164,22 +165,11 @@ const UserPage = ({ params }: { params: { username: string } }) => {
         }
     };
 
-    const followUser = () => {
-        // Follows the user and handles if it is already followed
-    };
-
     return (
-        <main className="flex min-h-screen flex-col">
+        <main className="flex h-full flex-col">
             <div
-                className="absolute z-50"
-                style={{ paddingLeft: '150px', top: '350px' }}
-            ></div>
-
-            <div
-                className="w-full border-b image-edit flex items-center justify-center"
+                className="w-full h-full border-b image-edit flex items-center justify-center sm:h-1/3 md:h-1/2 lg:h-1/2"
                 style={{
-                    maxHeight: '450px',
-                    minHeight: '450px',
                     overflow: 'hidden',
                 }}
             >
@@ -224,256 +214,287 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                 ></Image>
             </div>
 
-            <div className="">
+            <div>
                 <div className="flex pt-6 2xl:px-60 lg:px-40 md:px-10 sm:px-6">
-                    <div className="w-40 h-40 mr-6">
-                        <div className="avatar-edit flex items-center justify-center h-full w-full">
-                            {!isOwner ? (
-                                ''
-                            ) : (
-                                <div className="avatar-edit-buttons absolute gap-x-4 flex z-10">
-                                    <Button
-                                        variant="bordered"
-                                        color="secondary"
-                                        isIconOnly={true}
-                                        style={{ padding: '6px' }}
-                                    >
-                                        <XMarkIcon />
-                                    </Button>
-                                    <Button
-                                        onClick={() => {
-                                            setCurrentUploadType('avatar');
-                                            handleFileSelect();
-                                        }}
-                                        variant="bordered"
-                                        color="secondary"
-                                        isIconOnly={true}
-                                        style={{ padding: '6px' }}
-                                    >
-                                        <PhotoIcon />
-                                    </Button>
-                                </div>
-                            )}
-                            {avatarUrl ? (
-                                <Image
-                                    alt="default"
-                                    isLoading={avatarLoading}
-                                    src={avatarUrl}
-                                    className={`border-d ${
-                                        isOwner ? 'avatar-img' : ''
-                                    }`}
-                                    style={{ maxWidth: 'auto', height: '100%' }}
-                                    removeWrapper={true}
-                                ></Image>
-                            ) : (
-                                <div
-                                    className="pulsating-span"
-                                    style={{
-                                        aspectRatio: '1 / 1',
-                                        height: '100%',
-                                    }}
-                                ></div>
-                            )}
-                        </div>
-                    </div>
-
                     <div className="flex items-end justify-between grow">
                         <div className="w-full">
-                            <div className="h-40">
-                                {/* Div to make the content be same height as image */}
-                                <div className="w-full flex justify-between items-center">
-                                    <h1>
-                                        {!profileData.username ? (
-                                            <span className="pulsating-span">
-                                                usernamereal
-                                            </span>
+                            <div className="flex sm:flex-col md:flex-row lg:flex-row">
+                                <div className="w-40 h-40 mr-6">
+                                    <div className="avatar-edit flex items-center justify-center h-full w-full">
+                                        {!isOwner ? (
+                                            ''
                                         ) : (
-                                            profileData.username
+                                            <div className="avatar-edit-buttons absolute gap-x-4 flex z-10">
+                                                <Button
+                                                    variant="bordered"
+                                                    color="secondary"
+                                                    isIconOnly={true}
+                                                    style={{ padding: '6px' }}
+                                                >
+                                                    <XMarkIcon />
+                                                </Button>
+                                                <Button
+                                                    onClick={() => {
+                                                        setCurrentUploadType(
+                                                            'avatar'
+                                                        );
+                                                        handleFileSelect();
+                                                    }}
+                                                    variant="bordered"
+                                                    color="secondary"
+                                                    isIconOnly={true}
+                                                    style={{ padding: '6px' }}
+                                                >
+                                                    <PhotoIcon />
+                                                </Button>
+                                            </div>
                                         )}
-                                    </h1>
-                                    <div className="flex gap-x-4">
-                                        {isOwner === null && (
-                                            <span className="pulsating-span">
-                                                Seguir doidadod
-                                            </span>
-                                        )}
-                                        {isOwner !== null && !isOwner && (
-                                            <FollowUser
-                                                userData={profileData}
-                                            />
-                                        )}
-                                        {isOwner !== null && isOwner && (
-                                            <Button
-                                                variant="ghost"
-                                                color="secondary"
-                                                style={{ lineHeight: '1.5' }}
-                                                onClick={() =>
-                                                    setOpenedEditPopup(true)
-                                                }
-                                                endContent={
-                                                    <PencilIcon className="h-1/2" />
-                                                }
-                                            >
-                                                Editar Perfil
-                                            </Button>
-                                        )}
-                                        {isOwner !== null && !isOwner && (
-                                            <StartDM />
-                                        )}
-                                        {isOwner === null && (
-                                            <span className="pulsating-span">
-                                                Place
-                                            </span>
+                                        {avatarUrl ? (
+                                            <Image
+                                                alt="default"
+                                                isLoading={avatarLoading}
+                                                src={avatarUrl}
+                                                className={`border-d ${
+                                                    isOwner ? 'avatar-img' : ''
+                                                }`}
+                                                style={{
+                                                    maxWidth: 'auto',
+                                                    height: '100%',
+                                                }}
+                                                removeWrapper={true}
+                                            ></Image>
+                                        ) : (
+                                            <div
+                                                className="pulsating-span"
+                                                style={{
+                                                    aspectRatio: '1 / 1',
+                                                    height: '100%',
+                                                }}
+                                            ></div>
                                         )}
                                     </div>
                                 </div>
-                                <p className="pt-1">
-                                    {profileData.fullName === undefined ? (
-                                        <span className="pulsating-span">
-                                            usernamereall
-                                        </span>
-                                    ) : profileData.fullName ? (
-                                        profileData.fullName
-                                    ) : (
-                                        ''
-                                    )}
-                                </p>
-                                <div className="flex mt-6 gap-x-4 w-full">
-                                    <div className="flex">
-                                        <Link color="secondary">
-                                            <p
-                                                onClick={() =>
-                                                    setFollowerPopup(true)
-                                                }
-                                            >
-                                                {profileData.following ? (
-                                                    <>
-                                                        <b>
-                                                            {
-                                                                profileData
-                                                                    .following
-                                                                    .length
-                                                            }
-                                                        </b>{' '}
-                                                        Seguidores
-                                                    </>
-                                                ) : (
-                                                    <span className="pulsating-span">
-                                                        0 Seguindo
-                                                    </span>
-                                                )}
-                                            </p>
-                                        </Link>
+                                <div>
+                                    {/* Div to make the content be same height as image */}
+                                    <div>
+                                        <h1>
+                                            {!profileData.username ? (
+                                                <span className="pulsating-span">
+                                                    usernamereal
+                                                </span>
+                                            ) : (
+                                                profileData.username
+                                            )}
+                                        </h1>
                                     </div>
-                                    <div className="flex">
-                                        <Link color="secondary">
-                                            <p
-                                                onClick={() =>
-                                                    setFollowingPopup(true)
-                                                }
-                                            >
-                                                {profileData.followers ? (
-                                                    <>
-                                                        <b>
-                                                            {
-                                                                profileData
-                                                                    .followers
-                                                                    .length
-                                                            }
-                                                        </b>{' '}
-                                                        Seguindo
-                                                    </>
-                                                ) : (
-                                                    <span className="pulsating-span">
-                                                        0 Seguindo
-                                                    </span>
-                                                )}
-                                            </p>
-                                        </Link>
+                                    <p className="pt-1">
+                                        {profileData.fullName === undefined ? (
+                                            <span className="pulsating-span">
+                                                usernamereall
+                                            </span>
+                                        ) : profileData.fullName ? (
+                                            profileData.fullName
+                                        ) : (
+                                            ''
+                                        )}
+                                    </p>
+                                    <div className="flex mt-6 gap-x-4 w-full">
+                                        <div className="flex">
+                                            <Link color="secondary">
+                                                <p
+                                                    onClick={() =>
+                                                        setFollowerPopup(true)
+                                                    }
+                                                >
+                                                    {profileData.following ? (
+                                                        <>
+                                                            <b>
+                                                                {
+                                                                    profileData
+                                                                        .following
+                                                                        .length
+                                                                }
+                                                            </b>{' '}
+                                                            Seguidores
+                                                        </>
+                                                    ) : (
+                                                        <span className="pulsating-span">
+                                                            0 Seguindo
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </Link>
+                                        </div>
+                                        <div className="flex">
+                                            <Link color="secondary">
+                                                <p
+                                                    onClick={() =>
+                                                        setFollowingPopup(true)
+                                                    }
+                                                >
+                                                    {profileData.followers ? (
+                                                        <>
+                                                            <b>
+                                                                {
+                                                                    profileData
+                                                                        .followers
+                                                                        .length
+                                                                }
+                                                            </b>{' '}
+                                                            Seguindo
+                                                        </>
+                                                    ) : (
+                                                        <span className="pulsating-span">
+                                                            0 Seguindo
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                    <div className="pt-6">
+                                        <ul
+                                            style={{ color: '#333' }}
+                                            className="gap-y-3 grid"
+                                        >
+                                            {!profileData.biography ? (
+                                                ''
+                                            ) : (
+                                                <li
+                                                    style={{
+                                                        maxHeight: '50px',
+                                                    }}
+                                                    className="flex items-center gap-x-2"
+                                                >
+                                                    <div
+                                                        style={{
+                                                            height: '26px',
+                                                        }}
+                                                    >
+                                                        <PencilIcon
+                                                            className="h-full"
+                                                            style={{
+                                                                padding: '2px',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    {profileData.biography}
+                                                </li>
+                                            )}
+                                            {!profileData.birthDate ? (
+                                                ''
+                                            ) : (
+                                                <li
+                                                    style={{
+                                                        maxHeight: '50px',
+                                                    }}
+                                                    className="flex items-center gap-x-2"
+                                                >
+                                                    <div
+                                                        style={{
+                                                            height: '26px',
+                                                        }}
+                                                    >
+                                                        <CakeIcon
+                                                            className="h-full"
+                                                            style={{
+                                                                padding: '2px',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    {`Nasceu em ${formatTimestamp(
+                                                        profileData.birthDate
+                                                    )}`}
+                                                </li>
+                                            )}
+                                            {!profileData.location ? (
+                                                ''
+                                            ) : (
+                                                <li
+                                                    style={{
+                                                        maxHeight: '50px',
+                                                    }}
+                                                    className="flex items-center gap-x-2"
+                                                >
+                                                    <div
+                                                        style={{
+                                                            height: '26px',
+                                                        }}
+                                                    >
+                                                        <MapIcon className="h-full" />
+                                                    </div>
+                                                    {profileData.location}
+                                                </li>
+                                            )}
+                                            {profileData.createdAt ? (
+                                                <li
+                                                    style={{
+                                                        maxHeight: '50px',
+                                                    }}
+                                                    className="flex items-center gap-x-2"
+                                                >
+                                                    <div
+                                                        style={{
+                                                            height: '26px',
+                                                        }}
+                                                    >
+                                                        <CalendarIcon className="h-full" />
+                                                    </div>
+                                                    {`Entrou em ${formatTimestamp(
+                                                        profileData.createdAt
+                                                    )}`}
+                                                </li>
+                                            ) : (
+                                                <span className="pulsating-span">
+                                                    Entrou em 20 de 20 de 2000
+                                                </span>
+                                            )}
+                                            {profileData.createdAt ? (
+                                                ''
+                                            ) : (
+                                                <span className="pulsating-span">
+                                                    Entrou em 20 de 20 de 2000
+                                                </span>
+                                            )}
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
-                            <div className="pt-6">
-                                <ul
-                                    style={{ color: '#333' }}
-                                    className="gap-y-3 grid"
-                                >
-                                    {!profileData.biography ? (
-                                        ''
-                                    ) : (
-                                        <li
-                                            style={{ maxHeight: '50px' }}
-                                            className="flex items-center gap-x-2"
-                                        >
-                                            <div style={{ height: '26px' }}>
-                                                <PencilIcon
-                                                    className="h-full"
-                                                    style={{ padding: '2px' }}
-                                                />
-                                            </div>
-                                            {profileData.biography}
-                                        </li>
-                                    )}
-                                    {!profileData.birthDate ? (
-                                        ''
-                                    ) : (
-                                        <li
-                                            style={{ maxHeight: '50px' }}
-                                            className="flex items-center gap-x-2"
-                                        >
-                                            <div style={{ height: '26px' }}>
-                                                <CakeIcon
-                                                    className="h-full"
-                                                    style={{ padding: '2px' }}
-                                                />
-                                            </div>
-                                            {`Nasceu em ${formatTimestamp(
-                                                profileData.birthDate
-                                            )}`}
-                                        </li>
-                                    )}
-                                    {!profileData.location ? (
-                                        ''
-                                    ) : (
-                                        <li
-                                            style={{ maxHeight: '50px' }}
-                                            className="flex items-center gap-x-2"
-                                        >
-                                            <div style={{ height: '26px' }}>
-                                                <MapIcon className="h-full" />
-                                            </div>
-                                            {profileData.location}
-                                        </li>
-                                    )}
-                                    {profileData.createdAt ? (
-                                        <li
-                                            style={{ maxHeight: '50px' }}
-                                            className="flex items-center gap-x-2"
-                                        >
-                                            <div style={{ height: '26px' }}>
-                                                <ClockIcon className="h-full" />
-                                            </div>
-                                            {`Entrou em ${formatTimestamp(
-                                                profileData.createdAt
-                                            )}`}
-                                        </li>
-                                    ) : (
-                                        <span className="pulsating-span">
-                                            Entrou em 20 de 20 de 2000
-                                        </span>
-                                    )}
-                                    {profileData.createdAt ? (
-                                        ''
-                                    ) : (
-                                        <span className="pulsating-span">
-                                            Entrou em 20 de 20 de 2000
-                                        </span>
-                                    )}
-                                </ul>
+                        </div>
+                        <div className="flex justify-start h-full pt-3">
+                            <div className="flex gap-x-4">
+                                {isOwner === null && (
+                                    <span className="pulsating-span">
+                                        Seguir doidadod
+                                    </span>
+                                )}
+                                {isOwner !== null && !isOwner && (
+                                    <FollowUser userData={profileData} />
+                                )}
+                                {isOwner !== null && isOwner && (
+                                    <Button
+                                        variant="ghost"
+                                        color="secondary"
+                                        style={{ lineHeight: '1.5' }}
+                                        onClick={() => setOpenedEditPopup(true)}
+                                        endContent={
+                                            <PencilIcon className="h-1/2" />
+                                        }
+                                    >
+                                        Editar Perfil
+                                    </Button>
+                                )}
+                                {isOwner !== null && !isOwner && <StartDM />}
+                                {isOwner === null && (
+                                    <span className="pulsating-span">
+                                        Place
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
+                <div className="h-20"></div>
             </div>
 
             {/* Hidden components that are activated via functions */}

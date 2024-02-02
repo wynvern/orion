@@ -71,14 +71,13 @@ const UpdateProfile: React.FC<ProfileUpdateProps> = ({
 
                     {/* Popup container */}
                     <div
-                        className="border-d h-full lg:w-1/2 md:w-1/2 sm:w-2/3 flex flex-col justify-between  background-bg px-14 pb-10"
+                        className="border-d blurred-bg-color h-full lg:w-2/3 md:w-3/4 sm:w-full flex flex-col justify-between blurred-background-form lg:px-14 md:px-14 sm:px-6 pb-10 max-w-lg"
                         style={{
                             zIndex: '100',
                         }}
                     >
                         <div className="w-full flex items-center flex-col mt-10">
                             <h1>Editar seu perfil</h1>
-                            <p>Personalize seu perfil.</p>
                         </div>
                         <div
                             className="flex flex-col flex-grow justify-between my-14"

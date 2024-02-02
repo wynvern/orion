@@ -4,13 +4,12 @@ import {
     PaperAirplaneIcon,
     UserIcon,
 } from '@heroicons/react/24/solid';
-import { Button, Image } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { getSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import ProfileHeader from '../Header/ProfileDropdown';
 
-const Sidebar = () => {
+const SidebarMobile = () => {
     const path = usePathname();
     const router = useRouter();
     const [tokenUsername, setTokenUsername] = useState<string | undefined>(
@@ -27,15 +26,9 @@ const Sidebar = () => {
     }, []);
 
     return (
-        <div className="h-full w-full flex items-center justify-center p-4">
-            <nav className="h-full flex flex-col justify-between">
-                <div>
-                    <Image
-                        src="/static/logo.svg"
-                        className="w-full h-auto"
-                    ></Image>
-                </div>
-                <ul className="gap-y-4 flex flex-col">
+        <div className="w-full flex items-center justify-center p-5 border-t">
+            <nav>
+                <ul className="grid gap-x-16 grid-flow-col">
                     <li>
                         <Button
                             variant="bordered"
@@ -85,12 +78,9 @@ const Sidebar = () => {
                         </Button>
                     </li>
                 </ul>
-                <div>
-                    <ProfileHeader />
-                </div>
             </nav>
         </div>
     );
 };
 
-export default Sidebar;
+export default SidebarMobile;

@@ -49,19 +49,26 @@ export const authOptions: NextAuthOptions = {
                     id: existingUser.id,
                     username: existingUser.username,
                     email: existingUser.email,
+                    emailVerified: existingUser.emailVerified,
                 };
             },
         }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 return {
                     ...token,
                     username: user.username,
                     id: user.id,
+                    emailVerified: user.emailVerified,
                 };
             }
+
+            if (trigger === 'update') {
+                token.emailVerified = session.emailVerified;
+            }
+
             return token;
         },
         async session({ session, token }) {
@@ -71,6 +78,7 @@ export const authOptions: NextAuthOptions = {
                     ...session.user,
                     username: token.username,
                     id: token.id,
+                    emailVerified: token.emailVerified,
                 },
             };
         },

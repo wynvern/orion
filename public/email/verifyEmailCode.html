@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Verificação de Email</title>
+        <style>
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100vw;
+            }
+
+            .centered-div {
+                width: 60%;
+                text-align: center;
+                margin: 20px;
+            }
+
+            .code {
+                margin: 10px;
+                background-color: #0f0f0f;
+                padding: 10px;
+                color: white;
+                border-radius: 23px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="centered-div">
+            <div
+                style="
+                    background-color: #0f0f0f;
+                    padding: 20px;
+                    height: 100px;
+                    display: flex;
+                    align-items: center;
+                    border-radius: 23px;
+                "
+            >
+                <img
+                    style="width: auto; height: 100%"
+                    src="https://i.imgur.com/tyeZwC3.png"
+                />
+            </div>
+            <div style="padding-top: 20px; padding-bottom: 20px">
+                <h1>Verificação de Email</h1>
+                <h2>
+                    Olá {{username}}, para concluir a verificação do seu Email,
+                    coloque o código abaixo no aplicativo.
+                </h2>
+                <div class="code">{{code}}</div>
+                <p>O código expira em 5 minutos</p>
+            </div>
+            <div></div>
+        </div>
+    </body>
+</html>

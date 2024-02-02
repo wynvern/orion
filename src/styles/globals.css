@@ -13,13 +13,15 @@
 */
 
 * {
-    --bg: #0a0a0a;
+    --bg: #0f0f0f;
     --fg: white;
     --border: #333;
     --anim-speed: 0.1s;
+    --border-r: 25px;
 }
 
-body {
+body,
+html {
     background-color: var(--bg);
     color: var(--fg);
 }
@@ -31,6 +33,11 @@ h1 {
 
 p {
     font-size: 15px;
+}
+
+.n-scroll {
+    scrollbar-gutter: stable both-edges;
+    overflow: auto;
 }
 
 .border-color {
@@ -51,16 +58,16 @@ input:-webkit-autofill:active {
 
 .border-radius-sys {
     border: none;
-    border-radius: 23px;
+    border-radius: var(--border-r);
 }
 
 .border-d {
-    border-radius: 23px;
+    border-radius: var(--border-r);
     border: 1px solid var(--border);
 }
 
 .border-l {
-    border-radius: 0px 23px 23px 0px;
+    border-radius: 0px var(--border-r) var(--border-r) 0px;
 }
 
 .border-ll {
@@ -73,6 +80,10 @@ input:-webkit-autofill:active {
 
 .border-r {
     border-right: 1px solid var(--border);
+}
+
+.border-t {
+    border-top: 1px solid var(--border);
 }
 
 .image-banner {
@@ -162,4 +173,18 @@ input:-webkit-autofill:active {
 
 .active-popup {
     opacity: 1 !important;
+}
+
+.modal-style {
+    background-color: var(--bg);
+    color: white;
+    border: 1px solid var(--border);
+}
+
+.blurred-background-form {
+    backdrop-filter: blur(8px);
+}
+
+.blurred-bg-color {
+    background-color: rgba(3, 3, 3, 0.9);
 }

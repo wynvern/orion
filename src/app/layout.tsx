@@ -19,11 +19,18 @@ const RootLayout = ({
 }>) => {
     return (
         <html lang="pt-BR">
+            <head>
+                <link
+                    rel="shortcut icon"
+                    href="/static/logo.svg"
+                    type="image/x-icon"
+                />
+            </head>
             <body
                 className={`${roboto.className}`}
                 suppressHydrationWarning={true}
             >
-                <div className="min-h-screen">
+                <div className="h-dvh">
                     <Orion>{children}</Orion>
                 </div>
             </body>
