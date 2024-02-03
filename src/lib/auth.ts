@@ -36,6 +36,9 @@ export const authOptions: NextAuthOptions = {
                 if (!existingUser) {
                     throw new Error('email-not-found');
                 }
+                if (!existingUser.password) {
+                    throw new Error('differnt-signin-provider');
+                }
 
                 const passwordMatch = await compare(
                     credentials.password,

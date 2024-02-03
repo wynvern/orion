@@ -23,11 +23,12 @@ model User {
     createdAt     DateTime @default(now())
     emailVerified Boolean  @default(false)
 
-    posts     Post[]
-    comments  Comment[]
-    followers Follower[]  @relation("UserFollowers")
-    following Follower[]  @relation("UserFollowing")
-    PostLikes PostLikes[]
+    posts         Post[]
+    comments      Comment[]
+    followers     Follower[]      @relation("UserFollowers")
+    following     Follower[]      @relation("UserFollowing")
+    PostLikes     PostLikes[]
+    PostBookmarks PostBookmarks[]
 }
 
 model PostLikes {
@@ -42,16 +43,29 @@ model PostLikes {
     @@unique([userId, postId])
 }
 
-model Post {
-    id        String      @id @default(uuid())
-    content   String
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
+model PostBookmarks {
+    id        String   @id @default(uuid())
     userId    String
-    user      User        @relation(fields: [userId], references: [id])
-    comments  Comment[]
-    images    Int         @default(0)
-    likes     PostLikes[]
+    postId    String
+    createdAt DateTime @default(now())
+
+    user User @relation(fields: [userId], references: [id])
+    post Post @relation(fields: [postId], references: [id])
+
+    @@unique([userId, postId])
+}
+
+model Post {
+    id            String          @id @default(uuid())
+    content       String
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
+    userId        String
+    user          User            @relation(fields: [userId], references: [id])
+    comments      Comment[]
+    images        Int             @default(0)
+    likes         PostLikes[]
+    PostBookmarks PostBookmarks[]
 }
 
 model Comment {
