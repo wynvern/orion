@@ -41,13 +41,11 @@ export const GET = async (req: Request) => {
 
     const code = generateVerificationCode();
 
-    if (session.user.email && openCodes[session.user.email]) {
-        const existingCode = openCodes[session.user.email].code;
-
+    if (session.user.email && session.user.email in openCodes) {
         return NextResponse.json(
             {
                 user: null,
-                message: `Verification code already sent: ${existingCode}`,
+                message: `Verification code already sent`,
                 type: 'code-already-sent',
             },
             { status: 200 }

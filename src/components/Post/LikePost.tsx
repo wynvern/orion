@@ -4,10 +4,10 @@ import { Button } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 
 interface LikePostProps {
-    postUuid: string;
+    post: any;
 }
 
-const LikePost: React.FC<LikePostProps> = ({ postUuid }) => {
+const LikePost: React.FC<LikePostProps> = ({ post }) => {
     const [liked, setLiked] = useState(false);
 
     useEffect(() => {
@@ -36,7 +36,7 @@ const LikePost: React.FC<LikePostProps> = ({ postUuid }) => {
 
     const fetchIsLiked = async () => {
         try {
-            const response = await fetch(`/api/post/${postUuid}/like`, {
+            const response = await fetch(`/api/post/${post.id}/like`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const LikePost: React.FC<LikePostProps> = ({ postUuid }) => {
 
     const likePost = async () => {
         try {
-            const response = await fetch(`/api/post/${postUuid}/like`, {
+            const response = await fetch(`/api/post/${post.id}/like`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ const LikePost: React.FC<LikePostProps> = ({ postUuid }) => {
 
     const unlikePost = async () => {
         try {
-            const response = await fetch(`/api/post/${postUuid}/like`, {
+            const response = await fetch(`/api/post/${post.id}/like`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,16 +92,16 @@ const LikePost: React.FC<LikePostProps> = ({ postUuid }) => {
 
     return (
         <Button
-            isIconOnly={true}
-            variant="ghost"
+            variant="bordered"
             color={liked ? 'danger' : 'secondary'}
             onClick={handleLike}
             style={{
                 padding: '8px',
                 border: 'none',
             }}
+            startContent={liked ? <HeartIconFilled /> : <HeartIcon />}
         >
-            {liked ? <HeartIconFilled /> : <HeartIcon />}
+            {post.likes.length}
         </Button>
     );
 };

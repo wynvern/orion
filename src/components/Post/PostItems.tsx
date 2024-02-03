@@ -3,11 +3,8 @@ import formatTimestamp from '@/utils/formatTimesTamp';
 import {
     BookmarkIcon,
     ChatBubbleOvalLeftIcon,
-    HeartIcon,
 } from '@heroicons/react/24/outline';
 import {
-    ArrowDownIcon,
-    ArrowUpIcon,
     EllipsisHorizontalIcon,
     PencilIcon,
     ShareIcon,
@@ -96,10 +93,10 @@ const PostItems: React.FC<PostItemsProps> = ({
                         </div>
                     </div>
                     <div className="flex flex-row justify-around mt-6">
-                        <LikePost postUuid={post.id} />
+                        <LikePost post={post} />
                         <Button
                             isIconOnly={true}
-                            variant="ghost"
+                            variant="bordered"
                             color="secondary"
                             style={{
                                 padding: '8px',
@@ -110,7 +107,7 @@ const PostItems: React.FC<PostItemsProps> = ({
                         </Button>
                         <Button
                             isIconOnly={true}
-                            variant="ghost"
+                            variant="bordered"
                             color="secondary"
                             style={{
                                 padding: '8px',

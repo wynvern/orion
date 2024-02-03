@@ -4,8 +4,12 @@ import { NextUIProvider } from '../../lib/nextui';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { usePathname } from 'next/navigation';
 import SidebarMobile from '../Sidebar/SidebarMobile';
-import Header from '../Header/Header';
+
+import '../../styles/Toast.css';
+
 import { SessionProvider } from 'next-auth/react';
+import { ToastContainer } from 'react-toastify';
+import path from 'path';
 
 export default function Orion({
     children,
@@ -13,16 +17,13 @@ export default function Orion({
     children: React.ReactNode;
 }>) {
     const pathname = usePathname();
-    const disableSidebar =
-        pathname.includes('/login') ||
-        pathname.includes('/signup') ||
-        pathname.includes('/verify');
+    const enabledSidebar = pathname === '/' || pathname.includes('/user');
 
     return (
         <NextUIProvider className="h-full">
             <SessionProvider>
                 <div className="flex h-full">
-                    {disableSidebar ? (
+                    {!enabledSidebar ? (
                         ''
                     ) : (
                         <div
@@ -33,7 +34,7 @@ export default function Orion({
                         </div>
                     )}
 
-                    {disableSidebar ? (
+                    {!enabledSidebar ? (
                         ''
                     ) : (
                         <div className="flex w-full lg:hidden md:hidden sm:fixed z-50 bottom-0 p-6">
@@ -45,6 +46,7 @@ export default function Orion({
                         <main className="max-w-screen h-full">{children}</main>
                     </div>
                 </div>
+                <ToastContainer />
             </SessionProvider>
         </NextUIProvider>
     );

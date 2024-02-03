@@ -27,6 +27,8 @@
                 padding: 10px;
                 color: white;
                 border-radius: 23px;
+                width: fit-content;
+                margin-top: 20px;
             }
         </style>
     </head>
@@ -40,15 +42,27 @@
                     display: flex;
                     align-items: center;
                     border-radius: 23px;
-                    width: fit-content;
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 "
             >
                 <img
-                    style="width: auto; height: 100%"
+                    style="width: auto; height: 80%"
                     src="https://i.imgur.com/tyeZwC3.png"
                 />
             </div>
-            <div style="padding-top: 20px; padding-bottom: 20px">
+            <div
+                style="
+                    padding-top: 20px;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                "
+            >
                 <h1>Verificação de Email</h1>
                 <h2>
                     Olá {{username}}, para concluir a verificação do seu Email,

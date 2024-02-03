@@ -33,6 +33,7 @@ const config: Config = {
                     colors: {
                         foreground: '#333',
                         secondary: '#ffffff',
+                        primary: '#0079E8',
                     },
                 },
                 dark: {},

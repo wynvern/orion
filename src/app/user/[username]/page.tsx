@@ -461,7 +461,7 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                 )}
                                 {isOwner !== null && isOwner && (
                                     <Button
-                                        variant="ghost"
+                                        variant="bordered"
                                         color="secondary"
                                         style={{ lineHeight: '1.5' }}
                                         onClick={() => setOpenedEditPopup(true)}

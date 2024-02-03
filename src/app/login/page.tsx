@@ -29,6 +29,12 @@ const Login = () => {
 
     const toggleVisible = () => setVisible(!visible);
 
+    const handleEnterKey = (event: any) => {
+        if (event.key === 'Enter') {
+            handleLogin();
+        }
+    };
+
     const verifyInputs = () => {
         if (!email.includes('@') || !email.includes('.')) {
             setEmailIsInvalid({ bool: true, message: 'Email inválido' });
@@ -64,6 +70,7 @@ const Login = () => {
 
             if (signInData?.error === null) {
                 router.push(`/user`);
+                return false;
             }
 
             if (signInData?.error === 'password-not-match') {
@@ -80,8 +87,6 @@ const Login = () => {
         } catch (e) {
             console.error(e);
         }
-
-        setButtonLoading(false);
     };
 
     return (
@@ -92,7 +97,10 @@ const Login = () => {
                         <h1>Login</h1>
                         <p>Bem vindo de volta</p>
                     </div>
-                    <form className="md:px-10 lg:px-10 sm:px-2 py-10 grow flex flex-col justify-between">
+                    <form
+                        className="md:px-10 lg:px-10 sm:px-2 py-10 grow flex flex-col justify-between"
+                        onKeyDown={handleEnterKey}
+                    >
                         <div>
                             <div className="mb-8">
                                 <Input

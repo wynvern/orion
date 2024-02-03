@@ -1,11 +1,16 @@
 'use client';
 
-import { ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/solid';
+import {
+    ChevronRightIcon,
+    InformationCircleIcon,
+    ShieldCheckIcon,
+} from '@heroicons/react/24/solid';
 import { Button, Input, Link } from '@nextui-org/react';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import React from 'react';
+import { Slide, toast } from 'react-toastify';
 
 const VerifyEmail = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -45,15 +50,26 @@ const VerifyEmail = () => {
             if (response.ok) {
                 const data = await response.json();
 
-                setCodeSent(true);
-            } else {
-                const data = await response.json();
-
                 if (data.type === 'code-already-sent') {
                     setCodeInvalid({
                         bool: true,
                         message: `O código já foi enviado para seu Email`,
                     });
+                    setCodeSent(true);
+                } else {
+                    toast('Um código foi enviado para o seu Email.', {
+                        position: 'bottom-right',
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: 'dark',
+                        icon: <InformationCircleIcon />,
+                        transition: Slide,
+                    });
+                    setCodeSent(true);
                 }
             }
         } catch (e) {

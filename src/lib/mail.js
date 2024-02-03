@@ -2,7 +2,7 @@ import { createTransport } from 'nodemailer';
 
 const sendMail = (email, subject, html) => {
     let mailOptions = {
-        from: 'portalband@band.com.br',
+        from: 'orion-app@mail.com',
         to: email,
         subject: subject,
         html: html,

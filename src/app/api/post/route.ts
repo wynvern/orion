@@ -95,6 +95,7 @@ export const GET = async (req: Request) => {
         const posts = await db.post.findMany({
             include: {
                 user: true,
+                likes: true,
             },
             orderBy: {
                 createdAt: 'desc',

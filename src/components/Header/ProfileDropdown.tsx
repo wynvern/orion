@@ -4,6 +4,7 @@ import {
     ArrowLeftEndOnRectangleIcon,
     Cog6ToothIcon,
     InformationCircleIcon,
+    UserIcon,
 } from '@heroicons/react/24/solid';
 import {
     Dropdown,
@@ -14,14 +15,13 @@ import {
 } from '@nextui-org/react';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SignOut from '../Form/confirmSignOut';
+import { useRouter } from 'next/navigation';
 
 const ProfileHeader = () => {
     const [session, setSession] = useState<Session | null>();
     const [signOutOpen, setSignOutOpen] = useState(false);
-
     const router = useRouter();
 
     useEffect(() => {
@@ -60,6 +60,25 @@ const ProfileHeader = () => {
                         <p className="font-bold">
                             Logado como <b>{session?.user.username}</b>
                         </p>
+                    </DropdownItem>
+                    <DropdownItem
+                        key="profile"
+                        description="Veja o seu perfil"
+                        className="border-radius-sys"
+                        onClick={() =>
+                            router.push(`/user/${session?.user.username}`)
+                        }
+                        startContent={
+                            <UserIcon
+                                scale={0.1}
+                                className="w-14"
+                                style={{
+                                    padding: '10px',
+                                }}
+                            />
+                        }
+                    >
+                        Perfil
                     </DropdownItem>
                     <DropdownItem
                         key="settings"
