@@ -99,6 +99,7 @@ export const POST = async (req: Request) => {
             { status: 201 }
         );
     } catch (e) {
+        console.error(e);
         return Response.json(
             { message: 'Someting went wrong...' },
             { status: 500 }
