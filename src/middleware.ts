@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const middleware = async (req: NextRequest) => {
-    const resSession = await fetch('/api/auth/session', {
+    const resSession = await fetch('http://localhost:3000/api/auth/session', {
         headers: {
             'Content-Type': 'application/json',
             Cookie: req.headers.get('cookie') || '',
@@ -10,7 +10,7 @@ const middleware = async (req: NextRequest) => {
     });
     const session = await resSession.json();
 
-    if (session) {
+    if (Object.keys(session).length !== 0) {
         const { user } = session;
 
         if (!user.emailVerified && !req.url.includes('/verify')) {
@@ -29,6 +29,11 @@ const middleware = async (req: NextRequest) => {
             return NextResponse.redirect(new URL('/login', req.url));
         }
     }
+};
+
+export const config = {
+    matcher: ['/', '/user/:path*', '/login', '/signup', '/verify'],
+    runtime: 'experimental-edge',
 };
 
 export default middleware;
