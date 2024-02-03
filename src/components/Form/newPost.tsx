@@ -7,10 +7,9 @@ import {
     ModalFooter,
     Button,
     Textarea,
-    Link,
     Image,
 } from '@nextui-org/react';
-import { PencilIcon, PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { PhotoIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 interface NewPostProps {
     isActive: boolean;
@@ -26,16 +25,42 @@ const CreatePost: React.FC<NewPostProps> = ({
     const [newPostContent, setNewPostContent] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
     const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]); // New state for holding File objects
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const convertImagesToBase64 = async (images: File[]): Promise<string[]> => {
+        const base64Promises = images.map((file) => {
+            return new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64String = reader.result
+                        ?.toString()
+                        .split(',')[1] as string;
+                    resolve(base64String);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        try {
+            const base64Images = await Promise.all(base64Promises);
+            return base64Images;
+        } catch (error) {
+            console.error('Error converting images to base64:', error);
+            throw error;
+        }
+    };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
 
-        if (uploadedImages.length > 4) {
+        if (imageFiles.length + (files?.length || 0) > 4) {
             return false;
         }
 
         if (files) {
+            // Only set the File objects to the state
+            setImageFiles((prevFiles) => [...prevFiles, ...Array.from(files)]);
             const imageUrls = Array.from(files).map((file) =>
                 URL.createObjectURL(file)
             );
@@ -46,11 +71,13 @@ const CreatePost: React.FC<NewPostProps> = ({
     const createPost = async () => {
         try {
             setIsLoading(true);
+            const images = await convertImagesToBase64(imageFiles);
+
             const response = await fetch('/api/post', {
                 method: 'POST',
                 body: JSON.stringify({
                     text: newPostContent,
-                    images: uploadedImages,
+                    images: images,
                 }),
             });
             if (response.ok) {
@@ -90,6 +117,9 @@ const CreatePost: React.FC<NewPostProps> = ({
                                 label="Conteúdo da postagem"
                                 variant="bordered"
                                 value={newPostContent}
+                                classNames={{
+                                    inputWrapper: 'border-none',
+                                }}
                                 onValueChange={(e) => {
                                     setNewPostContent(e);
                                 }}
@@ -112,6 +142,11 @@ const CreatePost: React.FC<NewPostProps> = ({
                                                                 i !== index
                                                         )
                                                 );
+                                                setImageFiles((prevFiles) =>
+                                                    prevFiles.filter(
+                                                        (_, i) => i !== index
+                                                    )
+                                                );
                                             }}
                                             isIconOnly={true}
                                             className="absolute top-0 left-0 z-50 p-2 m-1"
@@ -131,8 +166,6 @@ const CreatePost: React.FC<NewPostProps> = ({
                             <div className="h-full">
                                 <Button
                                     isIconOnly={true}
-                                    variant="bordered"
-                                    color="secondary"
                                     onClick={() =>
                                         fileInputRef.current?.click()
                                     }
@@ -150,7 +183,7 @@ const CreatePost: React.FC<NewPostProps> = ({
                                 isLoading={isLoading}
                             >
                                 Criar Postagem
-                                <PencilIcon className="h-1/2" />
+                                <PlusIcon className="h-1/2" />
                             </Button>
                         </ModalFooter>
                     </>

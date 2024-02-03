@@ -77,7 +77,6 @@ export const POST = async (
             { status: 200 }
         );
     } catch (e) {
-        console.log(e);
         return Response.json(
             { message: 'Something went wrong...' },
             { status: 500 }
@@ -155,7 +154,6 @@ export const DELETE = async (
             { status: 200 }
         );
     } catch (e) {
-        console.log(e);
         return NextResponse.json(
             { message: 'Something went wrong...' },
             { status: 500 }

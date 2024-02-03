@@ -73,8 +73,6 @@ export const GET = async (req: Request) => {
 
     await sendMail(session.user.email, 'Verificação de Email', html);
 
-    console.log(code);
-
     return NextResponse.json(
         {
             user: null,

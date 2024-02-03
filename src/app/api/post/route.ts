@@ -4,6 +4,8 @@ import timeDifference from '@/utils/timeDifference';
 import { Post } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
+import sharp from 'sharp';
+import * as fs from 'fs/promises';
 
 export const POST = async (req: Request) => {
     try {
@@ -23,8 +25,6 @@ export const POST = async (req: Request) => {
         const body = await req.json();
         const { text, images } = body;
 
-        console.log(images);
-
         if (!text) {
             return Response.json(
                 { message: 'Missing text...' },
@@ -42,8 +42,27 @@ export const POST = async (req: Request) => {
         const newPost = await db.post.create({
             data: {
                 content: text,
+                images: images.length,
                 userId: session.user.id,
             },
+        });
+
+        await fs.mkdir(`./public/uploads/posts/${newPost.id}`, {
+            recursive: true,
+        });
+
+        images.map(async (element: string, index: number) => {
+            const imageData = Buffer.from(element, 'base64');
+
+            const pngImageData = await sharp(imageData)
+                .rotate()
+                .toFormat('png')
+                .toBuffer();
+
+            const filePath = `./public/uploads/posts/${newPost.id}/${
+                index + 1
+            }.png`;
+            require('fs').writeFileSync(filePath, pngImageData);
         });
 
         return NextResponse.json(
@@ -51,7 +70,6 @@ export const POST = async (req: Request) => {
             { status: 201 }
         );
     } catch (e) {
-        console.log(e);
         return Response.json(
             { message: 'Someting went wrong...' },
             { status: 500 }

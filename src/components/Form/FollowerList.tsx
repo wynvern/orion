@@ -30,7 +30,6 @@ const FollowerList: React.FC<FollowerListProps> = ({
 
         if (response.ok) {
             const data: FollowerData = await response.json();
-            console.log(data.data);
             return data.data;
         } else {
             console.error(response.statusText);

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `post` ADD COLUMN `images` INTEGER NOT NULL DEFAULT 0;

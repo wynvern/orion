@@ -188,3 +188,17 @@ input:-webkit-autofill:active {
 .blurred-bg-color {
     background-color: rgba(3, 3, 3, 0.9);
 }
+
+.post-image-top {
+    border-bottom: 1px solid var(--border) !important;
+    border-radius: var(--border-r) var(--border-r) 0px 0px;
+}
+
+.post-image-left {
+    border-right: 1px solid var(--border);
+    border-radius: var(--border-r) 0px 0px var(--border-r) !important;
+}
+
+.nav-mobile {
+    border-radius: var(--border-r);
+}

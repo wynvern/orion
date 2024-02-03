@@ -78,7 +78,7 @@ const Login = () => {
             }
             setButtonLoading(false);
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
 
         setButtonLoading(false);
@@ -189,10 +189,12 @@ const Login = () => {
                                     className="border-color rounded-3xl  h-14 w-full"
                                     startContent={
                                         <div className="p-2">
-                                            <img
+                                            <Image
                                                 src="/company-logos/google.svg"
                                                 style={{ width: '30px' }}
-                                            ></img>
+                                                removeWrapper={true}
+                                                alt="Google logo"
+                                            ></Image>
                                         </div>
                                     }
                                 >
@@ -207,10 +209,12 @@ const Login = () => {
                                     className="border-color rounded-3xl  h-14 w-full"
                                     startContent={
                                         <div className="p-2">
-                                            <img
+                                            <Image
                                                 src="/company-logos/github.svg"
                                                 style={{ width: '30px' }}
-                                            ></img>
+                                                alt="Github logo"
+                                                removeWrapper={true}
+                                            ></Image>
                                         </div>
                                     }
                                 >

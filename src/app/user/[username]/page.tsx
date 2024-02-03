@@ -1,11 +1,10 @@
 'use client';
 
-import { SetStateAction, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Image, Link } from '@nextui-org/react';
 import {
     CakeIcon,
     CalendarIcon,
-    ClockIcon,
     MapIcon,
     PencilIcon,
     PhotoIcon,
@@ -56,13 +55,6 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                 },
             });
 
-            /*             await new Promise<void>((resolve) => {
-                setTimeout(() => {
-                    console.log('alohas');
-                    resolve(); // Resolve the promise after the timeout
-                }, 3000);
-            }); */
-
             // For delaying animation
             isVisitorOwner(params.username);
 
@@ -71,17 +63,13 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
                 // banner
                 setBannerUrl(
-                    `http://localhost:3000/api/image/banner/${
-                        data.user.id
-                    }?timestamp=${Date.now()}`
+                    `/api/image/banner/${data.user.id}?timestamp=${Date.now()}`
                 );
                 setBannerLoading(false);
 
                 // avatar
                 setAvatarUrl(
-                    `http://localhost:3000/api/image/avatar/${
-                        data.user.id
-                    }?timestamp=${Date.now()}`
+                    `/api/image/avatar/${data.user.id}?timestamp=${Date.now()}`
                 );
                 setAvatarLoading(false);
                 setProfileData(data.user);
@@ -132,14 +120,14 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                             if (response.ok) {
                                 if (type === 'banner') {
                                     setBannerUrl(
-                                        `http://localhost:3000/api/image/banner/${
+                                        `/api/image/banner/${
                                             profileData.id
                                         }?timestamp=${Date.now()}`
                                     );
                                     setBannerLoading(false);
                                 } else {
                                     setAvatarUrl(
-                                        `http://localhost:3000/api/image/avatar/${
+                                        `/api/image/avatar/${
                                             profileData.id
                                         }?timestamp=${Date.now()}`
                                     );

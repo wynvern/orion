@@ -1,29 +1,11 @@
 'use client';
 
+import DeletePost from '@/components/Form/deletePost';
 import CreatePost from '@/components/Form/newPost';
 import Header from '@/components/Header/Header';
-import { Post } from '@/types/post';
-import formatTimestamp from '@/utils/formatTimesTamp';
-import { BookmarkIcon } from '@heroicons/react/24/outline';
-import {
-    ArrowDownIcon,
-    ArrowUpIcon,
-    EllipsisHorizontalIcon,
-    PencilIcon,
-    PlusIcon,
-    ShareIcon,
-    SparklesIcon,
-    TrashIcon,
-} from '@heroicons/react/24/solid';
-import {
-    Button,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownTrigger,
-    Image,
-    Link,
-} from '@nextui-org/react';
+import PostItems from '@/components/Post/PostItems';
+import { PlusIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import { Button } from '@nextui-org/react';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/react';
 import React from 'react';
@@ -41,7 +23,7 @@ const keyMapping: Record<string, string> = {
 const Home = () => {
     const [newPostPopup, setNewPostPopup] = useState(false);
     const [session, setSession] = useState<Session | null>();
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState([]);
     const [scrollY, setScrollY] = useState(0);
 
     const fetchPosts = async () => {
@@ -52,7 +34,6 @@ const Home = () => {
             if (response.ok) {
                 const data = await response.json();
 
-                console.log(data);
                 setPosts(data.posts);
             }
         } catch (e: any) {
@@ -71,172 +52,8 @@ const Home = () => {
         executeLoad();
     }, []);
 
-    const handleScroll = (e) => {
+    const handleScroll = async (e: any) => {
         setScrollY(e.target.scrollTop);
-    };
-
-    const postsMapped = (dateKey: any) => {
-        return posts[dateKey].map((post: Post) => (
-            <React.Fragment key={post.id}>
-                <>
-                    <div
-                        key={post.id}
-                        className="border-d mb-10 sm:mb-6 lg:p-6 md:p-6 sm:p-4 sm:pt-6 flex flex-col w-full"
-                    >
-                        <div className="flex w-full">
-                            <div className="h-20 w-20">
-                                <Image
-                                    src={`/api/image/avatar/${post.user.id}`}
-                                    alt="user profile"
-                                    className="border-d z-0"
-                                    removeWrapper={true}
-                                    style={{
-                                        height: '100%',
-                                        width: '100%',
-                                    }}
-                                />
-                            </div>
-                            <div className="pl-6 grow w-1">
-                                <div className="flex items-center gap-x-2 mb-2">
-                                    <b>
-                                        <Link
-                                            href={`/user/${post.user.username}`}
-                                            color="secondary"
-                                        >
-                                            {post.user.username}
-                                        </Link>
-                                    </b>
-                                    <p>•</p>
-                                    <p className="text-sm">
-                                        {formatTimestamp(post.createdAt)}
-                                    </p>
-                                </div>
-                                <p>{post.content}</p>
-                            </div>
-                        </div>
-                        <div className="flex flex-row justify-around mt-6">
-                            <Button
-                                isIconOnly={true}
-                                variant="ghost"
-                                color="secondary"
-                                style={{
-                                    padding: '8px',
-                                    border: 'none',
-                                }}
-                            >
-                                <ArrowUpIcon />
-                            </Button>
-                            <Button
-                                isIconOnly={true}
-                                variant="ghost"
-                                color="secondary"
-                                style={{
-                                    padding: '8px',
-                                    border: 'none',
-                                }}
-                            >
-                                <ArrowDownIcon />
-                            </Button>
-                            <Button
-                                isIconOnly={true}
-                                variant="ghost"
-                                color="secondary"
-                                style={{
-                                    padding: '8px',
-                                    border: 'none',
-                                }}
-                            >
-                                <BookmarkIcon />
-                            </Button>
-                            <Dropdown
-                                classNames={{
-                                    content: 'background-bg border-d',
-                                }}
-                            >
-                                <DropdownTrigger>
-                                    <Button
-                                        variant="bordered"
-                                        color="secondary"
-                                        style={{
-                                            padding: '8px',
-                                            border: 'none',
-                                        }}
-                                        isIconOnly={true}
-                                    >
-                                        <EllipsisHorizontalIcon />
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    variant="faded"
-                                    aria-label="Dropdown menu with description"
-                                >
-                                    {session?.user.id === post.user.id ? (
-                                        <DropdownItem
-                                            key="edit"
-                                            description="Edite este post"
-                                            className="border-radius-sys"
-                                            startContent={
-                                                <PencilIcon
-                                                    scale={0.1}
-                                                    className="w-14"
-                                                    style={{
-                                                        padding: '10px',
-                                                    }}
-                                                />
-                                            }
-                                        >
-                                            Editar
-                                        </DropdownItem>
-                                    ) : (
-                                        <DropdownItem className="hidden">
-                                            asd
-                                        </DropdownItem>
-                                    )}
-                                    <DropdownItem
-                                        key="share"
-                                        description="Compartilhar post"
-                                        className="border-radius-sys"
-                                        startContent={
-                                            <ShareIcon
-                                                scale={0.1}
-                                                className="w-14"
-                                                style={{
-                                                    padding: '10px',
-                                                }}
-                                            />
-                                        }
-                                    >
-                                        Compartilhar
-                                    </DropdownItem>
-                                    {session?.user.id === post.user.id ? (
-                                        <DropdownItem
-                                            key="delete"
-                                            description="Delete este post"
-                                            className="border-radius-sys text-danger"
-                                            startContent={
-                                                <TrashIcon
-                                                    scale={0.1}
-                                                    className="w-14"
-                                                    style={{
-                                                        padding: '10px',
-                                                    }}
-                                                />
-                                            }
-                                        >
-                                            Deletar
-                                        </DropdownItem>
-                                    ) : (
-                                        <DropdownItem className="hidden">
-                                            asd
-                                        </DropdownItem>
-                                    )}
-                                </DropdownMenu>
-                            </Dropdown>
-                        </div>
-                    </div>
-                </>
-            </React.Fragment>
-        ));
     };
 
     return (
@@ -245,7 +62,7 @@ const Home = () => {
                 <Header scrollY={scrollY} />
             </div>
 
-            <div className="fixed bottom-12 right-6 lg:bottom-12 md:bottom-12 sm:bottom-20 sm:pb-6 md:pb-0 lg:pb-0">
+            <div className="fixed lg:bottom-12 md:bottom-12 sm:bottom-20 lg:right-16 md:right-16 sm:right-6 sm:pb-10 md:pb-0 lg:pb-0 z-50">
                 <Button
                     isIconOnly={true}
                     onClick={() => {
@@ -253,6 +70,7 @@ const Home = () => {
                     }}
                     color="primary"
                     size="lg"
+                    className="h-14 w-14 rounded-3xl"
                     style={{ padding: '8px' }}
                 >
                     <PlusIcon />
@@ -260,17 +78,14 @@ const Home = () => {
             </div>
 
             <div
-                className="w-full h-full lg:px-60 md:px-20 sm:px-2 n-scroll"
+                className="w-full h-full lg:px-60 md:px-40 sm:px-2 n-scroll"
                 onScroll={(e) => handleScroll(e)}
             >
-                <div className="h-20"></div>
+                <div className="sm:h-10 md:h-0 lg:h-0"></div>
                 {Object.keys(posts).map((dateKey) => (
                     <div key={dateKey}>
-                        {posts[dateKey].length > 0 ? (
-                            <h2
-                                className={`flex justify-center mb-10 mt-20`}
-                                style={{ color: '#333' }}
-                            >
+                        {(posts as any)[dateKey].length > 0 ? (
+                            <h2 className={`flex justify-center mb-10 mt-20`}>
                                 <b>{keyMapping[dateKey]}</b>
                             </h2>
                         ) : (
@@ -285,7 +100,11 @@ const Home = () => {
                                 )}
                             </div>
                         )}
-                        {postsMapped(dateKey)}
+                        <PostItems
+                            posts={(posts as any)[dateKey]}
+                            session={session}
+                            handleUpdate={fetchPosts}
+                        />
                     </div>
                 ))}
                 <div className="h-20"></div>

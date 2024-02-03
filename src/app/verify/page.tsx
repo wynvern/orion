@@ -5,8 +5,9 @@ import { Button, Input, Link } from '@nextui-org/react';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import React from 'react';
 
-const verifyEmail = () => {
+const VerifyEmail = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [codeSent, setCodeSent] = useState(false);
     const { update } = useSession();
@@ -84,7 +85,6 @@ const verifyEmail = () => {
                 const data = await response.json();
 
                 if (data.type === 'email-verified') {
-                    console.log('succssess');
                     update({ emailVerified: true });
                     setTimeout(() => {
                         router.push('/');
@@ -172,4 +172,4 @@ const verifyEmail = () => {
     );
 };
 
-export default verifyEmail;
+export default VerifyEmail;

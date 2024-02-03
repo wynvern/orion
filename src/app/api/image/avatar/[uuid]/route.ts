@@ -57,8 +57,6 @@ export const GET = async (
 
         return new Response(imageBuffer, { headers, status: 200 });
     } catch (e) {
-        console.log(e);
-
         return Response.json(
             { message: 'Someting went wrong...' },
             { status: 500 }

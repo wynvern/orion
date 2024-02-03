@@ -21,7 +21,7 @@ const RedirectToUser = () => {
         };
 
         redirect();
-    }, []); // Empty dependency array ensures useEffect runs only once when the component mounts
+    }); // Empty dependency array ensures useEffect runs only once when the component mounts
 
     return (
         // You might want to render something here, or you can leave it empty

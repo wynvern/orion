@@ -22,7 +22,6 @@ export const POST = async (req: Request) => {
 
         const body = await req.json();
         const { image } = body;
-        console.log(session);
         const imageData = Buffer.from(image, 'base64');
 
         const pngImageData = await sharp(imageData).toFormat('png').toBuffer();
@@ -52,7 +51,6 @@ export const POST = async (req: Request) => {
             { status: 200 }
         );
     } catch (e) {
-        console.log(e);
         return Response.json(
             { message: 'Something went wrong...' },
             { status: 500 }
@@ -101,7 +99,6 @@ export const DELETE = async (req: Request) => {
             { status: 200 }
         );
     } catch (e) {
-        console.log(e);
         return Response.json(
             { message: 'Something went wrong...' },
             { status: 500 }

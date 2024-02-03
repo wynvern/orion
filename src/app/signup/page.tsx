@@ -148,13 +148,13 @@ const Login = () => {
         <div className="flex w-full h-full items-center justify-center lg:py-6 md:py-6 sm:py-4 lg:px-0 md:px-0 sm:px-2">
             <div className="border-d h-full lg:w-2/3 md:w-3/4 sm:w-full flex">
                 <div className="lg:w-1/2 flex flex-col md:w-full sm:w-full h-full p-6">
-                    <div className="w-full flex items-center flex-col pt-4 sm:py-0 md:py-10">
+                    <div className="w-full flex items-center flex-col pt-4">
                         <h1>Criar Conta</h1>
                         <p>Crie uma conta e começe a diversão.</p>
                     </div>
                     <form className="md:px-10 lg:px-10 sm:px-2 py-10 grow flex flex-col justify-between">
                         <div>
-                            <div className="mb-8">
+                            <div className="mb-4">
                                 <Input
                                     type="text"
                                     placeholder="Nome de usuário"
@@ -179,7 +179,7 @@ const Login = () => {
                                     }}
                                 />
                             </div>
-                            <div className="mb-8">
+                            <div className="mb-4">
                                 <Input
                                     type="email"
                                     placeholder="Email"
@@ -204,7 +204,7 @@ const Login = () => {
                                     }}
                                 />
                             </div>
-                            <div className="mb-8">
+                            <div className="mb-4">
                                 <Input
                                     type={visible ? 'text' : 'password'}
                                     placeholder="Senha"
@@ -265,7 +265,7 @@ const Login = () => {
                             Ou
                         </div>
                         <div>
-                            <div className="mb-8">
+                            <div className="mb-4">
                                 <Button
                                     color="secondary"
                                     size="lg"
@@ -273,10 +273,12 @@ const Login = () => {
                                     className="border-color rounded-3xl h-14 w-full"
                                     startContent={
                                         <div className="p-2">
-                                            <img
+                                            <Image
                                                 src="/company-logos/google.svg"
                                                 style={{ width: '30px' }}
-                                            ></img>
+                                                alt="Google logo"
+                                                removeWrapper={true}
+                                            ></Image>
                                         </div>
                                     }
                                 >
@@ -291,10 +293,12 @@ const Login = () => {
                                     className="border-color rounded-3xl h-14 w-full"
                                     startContent={
                                         <div className="p-2">
-                                            <img
+                                            <Image
                                                 src="/company-logos/github.svg"
                                                 style={{ width: '30px' }}
-                                            ></img>
+                                                alt="Github logo"
+                                                removeWrapper={true}
+                                            ></Image>
                                         </div>
                                     }
                                 >

@@ -1,30 +1,17 @@
 import {
     BookmarkIcon,
     HomeIcon,
+    MagnifyingGlassIcon,
     PaperAirplaneIcon,
     UserIcon,
 } from '@heroicons/react/24/solid';
 import { Button, Image } from '@nextui-org/react';
-import { getSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import ProfileHeader from '../Header/ProfileDropdown';
 
 const Sidebar = () => {
     const path = usePathname();
     const router = useRouter();
-    const [tokenUsername, setTokenUsername] = useState<string | undefined>(
-        '/user/abc'
-    );
-
-    const getProfileUsername = async () => {
-        const session = await getSession();
-        setTokenUsername(session?.user.username);
-    };
-
-    useEffect(() => {
-        getProfileUsername();
-    }, []);
 
     return (
         <div className="h-full w-full flex items-center justify-center p-4">
@@ -32,6 +19,7 @@ const Sidebar = () => {
                 <div>
                     <Image
                         src="/static/logo.svg"
+                        alt="Orion logo"
                         className="w-full h-auto"
                     ></Image>
                 </div>
@@ -53,6 +41,20 @@ const Sidebar = () => {
                         <Button
                             variant="bordered"
                             style={{ border: 'none', padding: '6px' }}
+                            color={
+                                path.includes('/search')
+                                    ? 'secondary'
+                                    : 'default'
+                            }
+                            isIconOnly={true}
+                        >
+                            <MagnifyingGlassIcon />
+                        </Button>
+                    </li>
+                    <li>
+                        <Button
+                            variant="bordered"
+                            style={{ border: 'none', padding: '6px' }}
                             isIconOnly={true}
                         >
                             <BookmarkIcon />
@@ -65,23 +67,6 @@ const Sidebar = () => {
                             isIconOnly={true}
                         >
                             <PaperAirplaneIcon />
-                        </Button>
-                    </li>
-                    <li>
-                        <Button
-                            variant="bordered"
-                            style={{ border: 'none', padding: '6px' }}
-                            color={
-                                path.includes(String(tokenUsername))
-                                    ? 'secondary'
-                                    : 'default'
-                            }
-                            isIconOnly={true}
-                            onClick={() => {
-                                router.push(`/user/${tokenUsername}`);
-                            }}
-                        >
-                            <UserIcon />
                         </Button>
                     </li>
                 </ul>

@@ -23,13 +23,10 @@ export const POST = async (req: Request) => {
         const body = await req.json();
         const { image } = body;
 
-        // Assuming 'image' contains the base64-encoded image data
         const imageData = Buffer.from(image, 'base64');
 
-        // Convert the image to PNG using sharp
         const pngImageData = await sharp(imageData).toFormat('png').toBuffer();
 
-        // Specify the file path with a .png extension
         const filePath = `./public/uploads/avatars/${session.user.id}/original.png`;
 
         try {
@@ -46,6 +43,7 @@ export const POST = async (req: Request) => {
         }
 
         await sharp(pngImageData)
+            .rotate()
             .resize({
                 width: 500,
                 height: 500,
@@ -110,7 +108,6 @@ export const DELETE = async (req: Request) => {
             { status: 200 }
         );
     } catch (e) {
-        console.log(e);
         return Response.json(
             { message: 'Something went wrong...' },
             { status: 500 }

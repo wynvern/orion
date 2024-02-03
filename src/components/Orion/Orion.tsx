@@ -26,7 +26,7 @@ export default function Orion({
                         ''
                     ) : (
                         <div
-                            className="flex h-full z-10 blurred-background-form lg:block md:block sm:hidden p-6 pr-0"
+                            className="flex h-full z-10 background-bg lg:block md:block sm:hidden p-6 pr-0"
                             style={{ width: '100px' }}
                         >
                             <Sidebar></Sidebar>
@@ -36,7 +36,7 @@ export default function Orion({
                     {disableSidebar ? (
                         ''
                     ) : (
-                        <div className="flex w-full blurred-background-form lg:hidden md:hidden sm:fixed z-50 bottom-0 h-20">
+                        <div className="flex w-full lg:hidden md:hidden sm:fixed z-50 bottom-0 p-6">
                             <SidebarMobile></SidebarMobile>
                         </div>
                     )}

@@ -2,61 +2,77 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
-model User {
-  id        String    @id @default(uuid())
-  username  String    @unique
-  email     String    @unique
-  fullName  String?
-  biography String?
-  location  String?
-  birthDate String?
-  status    String    @default("Online")
-  password  String
-  createdAt DateTime  @default(now())
-  emailVerified Boolean @default(false)
 
-  posts      Post[]
-  comments   Comment[]
-  followers  Follower[] @relation("UserFollowers")
-  following  Follower[] @relation("UserFollowing")
+model User {
+    id            String   @id @default(uuid())
+    username      String   @unique
+    email         String   @unique
+    fullName      String?
+    biography     String?
+    location      String?
+    birthDate     String?
+    status        String   @default("Online")
+    password      String
+    createdAt     DateTime @default(now())
+    emailVerified Boolean  @default(false)
+
+    posts     Post[]
+    comments  Comment[]
+    followers Follower[]  @relation("UserFollowers")
+    following Follower[]  @relation("UserFollowing")
+    PostLikes PostLikes[]
+}
+
+model PostLikes {
+    id        String   @id @default(uuid())
+    userId    String
+    postId    String
+    createdAt DateTime @default(now())
+
+    user User @relation(fields: [userId], references: [id])
+    post Post @relation(fields: [postId], references: [id])
+
+    @@unique([userId, postId])
 }
 
 model Post {
-  id        String    @id @default(uuid())
-  content   String    
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  userId    String
-  user      User      @relation(fields: [userId], references: [id])
-  comments  Comment[]
+    id        String      @id @default(uuid())
+    content   String
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    userId    String
+    user      User        @relation(fields: [userId], references: [id])
+    comments  Comment[]
+    images    Int         @default(0)
+    likes     PostLikes[]
 }
 
 model Comment {
-  id        String   @id @default(uuid())
-  content   String   @db.VarChar(200)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  postId    String
-  user      User     @relation(fields: [userId], references: [id])
-  post      Post     @relation(fields: [postId], references: [id])
+    id        String   @id @default(uuid())
+    content   String   @db.VarChar(200)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    userId    String
+    postId    String
+    user      User     @relation(fields: [userId], references: [id])
+    post      Post     @relation(fields: [postId], references: [id])
 }
 
 model Follower {
-  id          String  @id @default(uuid())
-  followerId  String
-  followingId String
-  createdAt   DateTime @default(now())
+    id          String   @id @default(uuid())
+    followerId  String
+    followingId String
+    createdAt   DateTime @default(now())
 
-  follower    User    @relation(fields: [followerId], references: [id], name: "UserFollowers")
-  following   User    @relation(fields: [followingId], references: [id], name: "UserFollowing")
+    follower  User @relation(fields: [followerId], references: [id], name: "UserFollowers")
+    following User @relation(fields: [followingId], references: [id], name: "UserFollowing")
 
-  @@unique([followerId, followingId])
+    @@unique([followerId, followingId])
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@nextui-org/react';
-import { PaperAirplaneIcon } from '@heroicons/react/16/solid';
+import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
 
 const StartDM: React.FC = () => {
     const handleSendDM = () => {
