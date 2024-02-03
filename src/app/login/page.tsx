@@ -68,24 +68,34 @@ const Login = () => {
                 redirect: false,
             });
 
-            if (signInData?.error === null) {
+            if (signInData && signInData.error === null) {
                 router.push(`/user`);
-                return false;
+                return;
             }
 
-            if (signInData?.error === 'password-not-match') {
+            if (signInData && signInData.error === 'password-not-match') {
                 setPasswordIsInvalid({ bool: true, message: 'Senha inválida' });
-            }
-
-            if (signInData?.error === 'email-not-found') {
+            } else if (signInData && signInData.error === 'email-not-found') {
                 setEmailIsInvalid({
                     bool: true,
                     message: 'Uma conta com esse email não foi encontrada',
                 });
+            } else if (signInData && signInData.error === '401') {
+                // Handle 401 Unauthorized error (wrong credentials)
+                setPasswordIsInvalid({
+                    bool: true,
+                    message: 'Credenciais inválidas',
+                });
+            } else {
+                // Handle other errors
+                console.error('Unexpected error:', signInData);
             }
+
             setButtonLoading(false);
         } catch (e) {
-            console.error(e);
+            console.error('Error during login:', e);
+            // Handle unexpected errors here
+            setButtonLoading(false);
         }
     };
 
