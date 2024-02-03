@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Button, Image, Link } from '@nextui-org/react';
+import { Button, Image, Link, Tab, Tabs } from '@nextui-org/react';
 import {
     CakeIcon,
     CalendarIcon,
@@ -265,7 +265,7 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                 <div>
                                     {/* Div to make the content be same height as image */}
                                     <div>
-                                        <h1>
+                                        <h1 className="sm:text-3xl md:text-md lg:text-6xl sm:mt-4 md:mt-0 lg:mt-0">
                                             {!profileData.username ? (
                                                 <span className="pulsating-span">
                                                     usernamereal
@@ -286,7 +286,7 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                             ''
                                         )}
                                     </p>
-                                    <div className="flex mt-6 gap-x-4 w-full">
+                                    <div className="flex lg:mt-6 md:mt-6 sm:mt-4 gap-x-4 w-full">
                                         <div className="flex">
                                             <Link color="secondary">
                                                 <p
@@ -482,7 +482,29 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                         </div>
                     </div>
                 </div>
-                <div className="h-20"></div>
+                <div className="w-full">
+                    <Tabs aria-label="Options">
+                        <Tab key="photos" title="Photos">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit, sed do eiusmod tempor incididunt ut labore et
+                            dolore magna aliqua. Ut enim ad minim veniam, quis
+                            nostrud exercitation ullamco laboris nisi ut aliquip
+                            ex ea commodo consequat.
+                        </Tab>
+                        <Tab key="music" title="Music">
+                            Ut enim ad minim veniam, quis nostrud exercitation
+                            ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in
+                            voluptate velit esse cillum dolore eu fugiat nulla
+                            pariatur.
+                        </Tab>
+                        <Tab key="videos" title="Videos">
+                            Excepteur sint occaecat cupidatat non proident, sunt
+                            in culpa qui officia deserunt mollit anim id est
+                            laborum.
+                        </Tab>
+                    </Tabs>
+                </div>
             </div>
 
             {/* Hidden components that are activated via functions */}

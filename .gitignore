@@ -39,3 +39,4 @@ next-env.d.ts
 # Images from usage
 public/uploads/avatars
 public/uploads/banners
+public/uploads/posts
