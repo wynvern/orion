@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const middleware = async (req: NextRequest) => {
-    const resSession = await fetch('http://localhost:3000/api/auth/session', {
-        headers: {
-            'Content-Type': 'application/json',
-            Cookie: req.headers.get('cookie') || '',
-        },
-        method: 'GET',
-    });
+    const url = new URL(req.url);
+
+    const resSession = await fetch(
+        `${url.protocol}//${url.host}//api/auth/session`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Cookie: req.headers.get('cookie') || '',
+            },
+            method: 'GET',
+        }
+    );
     const session = await resSession.json();
 
     if (Object.keys(session).length !== 0) {
