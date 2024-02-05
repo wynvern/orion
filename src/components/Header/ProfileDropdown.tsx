@@ -39,23 +39,28 @@ const ProfileHeader = () => {
             <Dropdown placement="bottom-end" className="background-bg border-d">
                 <DropdownTrigger>
                     <div className="h-full">
-                        <Image
-                            alt="default"
-                            src={`/api/image/avatar/${session?.user.id}`}
-                            style={{
-                                width: 'auto',
-                                height: '100%',
-                                display: 'block',
-                                zIndex: '100',
-                            }}
-                            removeWrapper={true}
-                        ></Image>
+                        {session ? (
+                            <Image
+                                alt="default"
+                                src={`/api/image/avatar/${session?.user.id}`}
+                                style={{
+                                    width: 'auto',
+                                    height: '100%',
+                                    display: 'block',
+                                    zIndex: '100',
+                                }}
+                                removeWrapper={true}
+                            ></Image>
+                        ) : (
+                            ''
+                        )}
                     </div>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="User Actions" variant="flat">
                     <DropdownItem
-                        key="profile"
+                        key="info_user"
                         className="h-14 gap-2 border-radius-sys pl-5"
+                        textValue="aa"
                     >
                         <p className="font-bold">
                             Logado como <b>{session?.user.username}</b>

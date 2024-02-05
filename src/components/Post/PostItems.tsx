@@ -23,6 +23,7 @@ import { Session } from 'next-auth';
 import React, { useState } from 'react';
 import DeletePost from '../Form/deletePost';
 import LikePost from './LikePost';
+import BookmarkPost from './BookmarkPost';
 
 interface PostItemsProps {
     posts: Post[];
@@ -105,17 +106,7 @@ const PostItems: React.FC<PostItemsProps> = ({
                         >
                             <ChatBubbleOvalLeftIcon />
                         </Button>
-                        <Button
-                            isIconOnly={true}
-                            variant="bordered"
-                            color="secondary"
-                            style={{
-                                padding: '8px',
-                                border: 'none',
-                            }}
-                        >
-                            <BookmarkIcon />
-                        </Button>
+                        <BookmarkPost post={post} />
                         <Dropdown
                             classNames={{
                                 content: 'background-bg border-d',

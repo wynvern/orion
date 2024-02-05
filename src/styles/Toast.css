@@ -241,7 +241,6 @@
     border-radius: var(--border-r);
     border: 1px solid var(--border);
     padding: 20px;
-    font-size: 15px;
 }
 .Toastify__toast-theme--light {
     background: var(--toastify-color-light);

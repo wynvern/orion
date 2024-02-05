@@ -138,8 +138,10 @@ export const DELETE = async (
 
         await db.postLikes.delete({
             where: {
-                id: session.user.id,
-                postId: uuid,
+                userId_postId: {
+                    userId: session.user.id,
+                    postId: uuid,
+                },
             },
         });
 

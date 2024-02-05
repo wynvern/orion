@@ -32,10 +32,6 @@ h1 {
     font-weight: 900;
 }
 
-p {
-    font-size: 15px;
-}
-
 .n-scroll {
     scrollbar-gutter: stable both-edges;
     overflow: auto;

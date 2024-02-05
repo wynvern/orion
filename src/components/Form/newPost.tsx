@@ -27,6 +27,18 @@ const CreatePost: React.FC<NewPostProps> = ({
     const [uploadedImages, setUploadedImages] = useState<string[]>([]);
     const [imageFiles, setImageFiles] = useState<File[]>([]); // New state for holding File objects
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [wordCounter, setWordCounter] = useState(0);
+
+    const countWords = (text: string) => {
+        const words = text.trim().split(/\s+/).join();
+        setWordCounter(words.length);
+    };
+
+    const clearEverything = () => {
+        setWordCounter(0);
+        setUploadedImages([]);
+        setImageFiles([]);
+    };
 
     const convertImagesToBase64 = async (images: File[]): Promise<string[]> => {
         const base64Promises = images.map((file) => {
@@ -84,6 +96,7 @@ const CreatePost: React.FC<NewPostProps> = ({
                 handleCreatePost();
                 setIsLoading(false);
                 setIsActive(false);
+                clearEverything();
             }
         } catch (e: any) {
             console.error('Error:', e.message);
@@ -97,6 +110,7 @@ const CreatePost: React.FC<NewPostProps> = ({
             isOpen={isActive}
             onOpenChange={() => {
                 setIsActive(false);
+                clearEverything();
                 setNewPostContent('');
             }}
             className="modal-style"
@@ -113,17 +127,22 @@ const CreatePost: React.FC<NewPostProps> = ({
                         </ModalHeader>
                         <ModalBody className="py-6">
                             <Textarea
+                                size="lg"
                                 placeholder="Digite aqui..."
                                 label="Conteúdo da postagem"
                                 variant="bordered"
                                 value={newPostContent}
                                 classNames={{
-                                    inputWrapper: 'border-none',
+                                    inputWrapper: 'border-none p-0',
                                 }}
                                 onValueChange={(e) => {
+                                    countWords(e);
                                     setNewPostContent(e);
                                 }}
                             />
+                            <div>
+                                <p>{wordCounter}/200</p>
+                            </div>
 
                             <div
                                 className={`grid grid-cols-4 gap-4 ${
@@ -165,6 +184,9 @@ const CreatePost: React.FC<NewPostProps> = ({
                         <ModalFooter className="flex justify-between">
                             <div className="h-full">
                                 <Button
+                                    variant="bordered"
+                                    color="secondary"
+                                    style={{ border: 'none' }}
                                     isIconOnly={true}
                                     onClick={() =>
                                         fileInputRef.current?.click()

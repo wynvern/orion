@@ -1,43 +1,43 @@
-import { HeartIcon } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartIconFilled } from '@heroicons/react/24/solid';
+import { BookmarkIcon } from '@heroicons/react/24/outline';
+import { BookmarkIcon as BookmarkIconFilled } from '@heroicons/react/24/solid';
 import { Button } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 
-interface LikePostProps {
+interface BookmarkPostProps {
     post: any;
 }
 
-const LikePost: React.FC<LikePostProps> = ({ post }) => {
-    const [liked, setLiked] = useState(false);
+const BookmarkPost: React.FC<BookmarkPostProps> = ({ post }) => {
+    const [bookmarked, setBookmarked] = useState(false);
     const [realtimeUpdate, setRealtimeUpdate] = useState(post.bookmarks.length);
 
     useEffect(() => {
         const fetchFirstTime = async () => {
-            const isLikedNow = await fetchIsLiked();
+            const isBookmarkedNow = await fetchIsBookmarked();
 
-            if (isLikedNow) {
-                setLiked(true);
+            if (isBookmarkedNow) {
+                setBookmarked(true);
             } else {
-                setLiked(false);
+                setBookmarked(false);
             }
         };
 
         fetchFirstTime();
-    });
+    }, []);
 
-    const handleLike = async () => {
-        const isLikedNow = await fetchIsLiked();
+    const handleBookmark = async () => {
+        const isBookmarkedNow = await fetchIsBookmarked();
 
-        if (!isLikedNow) {
-            likePost();
+        if (!isBookmarkedNow) {
+            bookmarkPost();
         } else {
-            unlikePost();
+            unbookmarkPost();
         }
     };
 
-    const fetchIsLiked = async () => {
+    const fetchIsBookmarked = async () => {
         try {
-            const response = await fetch(`/api/post/${post.id}/like`, {
+            const response = await fetch(`/api/post/${post.id}/bookmark`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,9 +46,9 @@ const LikePost: React.FC<LikePostProps> = ({ post }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                if (data.type === 'post-liked') {
+                if (data.type === 'post-bookmarked') {
                     return true;
-                } else if (data.type === 'post-not-liked') {
+                } else if (data.type === 'post-not-bookmarked') {
                     return false;
                 }
             }
@@ -57,9 +57,9 @@ const LikePost: React.FC<LikePostProps> = ({ post }) => {
         }
     };
 
-    const likePost = async () => {
+    const bookmarkPost = async () => {
         try {
-            const response = await fetch(`/api/post/${post.id}/like`, {
+            const response = await fetch(`/api/post/${post.id}/bookmark`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -67,17 +67,17 @@ const LikePost: React.FC<LikePostProps> = ({ post }) => {
             });
 
             if (response.ok) {
+                setBookmarked(true);
                 setRealtimeUpdate(realtimeUpdate + 1);
-                setLiked(true);
             }
         } catch (e: any) {
             console.error('Error:', e.message);
         }
     };
 
-    const unlikePost = async () => {
+    const unbookmarkPost = async () => {
         try {
-            const response = await fetch(`/api/post/${post.id}/like`, {
+            const response = await fetch(`/api/post/${post.id}/bookmark`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,8 +85,8 @@ const LikePost: React.FC<LikePostProps> = ({ post }) => {
             });
 
             if (response.ok) {
+                setBookmarked(false);
                 setRealtimeUpdate(realtimeUpdate - 1);
-                setLiked(false);
             }
         } catch (e: any) {
             console.error('Error:', e.message);
@@ -96,17 +96,19 @@ const LikePost: React.FC<LikePostProps> = ({ post }) => {
     return (
         <Button
             variant="bordered"
-            color={liked ? 'danger' : 'secondary'}
-            onClick={handleLike}
+            color="secondary"
+            onClick={handleBookmark}
             style={{
                 padding: '8px',
                 border: 'none',
             }}
-            startContent={liked ? <HeartIconFilled /> : <HeartIcon />}
+            startContent={
+                bookmarked ? <BookmarkIconFilled /> : <BookmarkIcon />
+            }
         >
             {realtimeUpdate}
         </Button>
     );
 };
 
-export default LikePost;
+export default BookmarkPost;
