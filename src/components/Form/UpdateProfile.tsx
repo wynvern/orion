@@ -6,8 +6,17 @@ import {
     UserIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
-import { Button, Input, Textarea } from '@nextui-org/react';
-import { useState } from 'react';
+import {
+    Button,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Textarea,
+} from '@nextui-org/react';
+import { useEffect, useState } from 'react';
 
 interface ProfileUpdateProps {
     isActive: boolean;
@@ -49,123 +58,124 @@ const UpdateProfile: React.FC<ProfileUpdateProps> = ({
         setIsLoading(false);
     };
 
-    return (
-        <>
-            {isActive && (
-                <div
-                    style={{
-                        opacity: '0',
-                    }}
-                    className={`fixed inset-0 flex items-center justify-center z-50 py-6 ${
-                        isActive ? 'active-popup' : ''
-                    }`}
-                >
-                    {/* Background blur effect */}
-                    <div
-                        onClick={() => {
-                            setIsActive(false);
-                            setAtUpdateData(userData);
-                        }}
-                        className="fixed inset-0 bg-black opacity-50"
-                    ></div>
+    useEffect(() => {
+        if (!isActive) {
+            setAtUpdateData(userData);
+        }
+    });
 
-                    {/* Popup container */}
-                    <div
-                        className="border-d blurred-bg-color h-full lg:w-2/3 md:w-3/4 sm:w-full flex flex-col justify-between blurred-background-form lg:px-14 md:px-14 sm:px-6 pb-10 max-w-lg"
-                        style={{
-                            zIndex: '100',
-                        }}
-                    >
-                        <div className="w-full flex items-center flex-col mt-10">
-                            <h1>Editar seu perfil</h1>
-                        </div>
-                        <div
-                            className="flex flex-col flex-grow justify-between my-14"
+    return (
+        <Modal
+            isOpen={isActive}
+            onOpenChange={() => setIsActive(false)}
+            className="modal-style"
+            classNames={{
+                base: 'border-radius-sys lg:p-8 md:p-8 sm:p-6',
+                closeButton: 'transition-all mt-6 mr-6 active:scale-80',
+            }}
+        >
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1 pt-1">
+                            Editar Perfil
+                        </ModalHeader>
+                        <ModalBody
+                            className="flex flex-col flex-grow justify-between py-6"
                             style={{ overflowY: 'auto' }}
                         >
-                            <div className="mb-10">
-                                <Input
-                                    type="text"
-                                    label="Nome Completo"
-                                    isClearable={true}
-                                    variant="bordered"
-                                    classNames={{
-                                        inputWrapper: 'border-color',
-                                    }}
-                                    startContent={
-                                        <UserIcon className="h-1/2" />
-                                    }
-                                    value={atUpdateData.fullName}
-                                    onValueChange={(e) => {
-                                        setAtUpdateData((prevData) => ({
-                                            ...prevData,
-                                            fullName: e,
-                                        }));
-                                    }}
-                                />
-                            </div>
-                            <div className="mb-10">
-                                <Input
-                                    type="text"
-                                    label="Localização"
-                                    isClearable={true}
-                                    variant="bordered"
-                                    classNames={{
-                                        inputWrapper: 'border-color',
-                                    }}
-                                    startContent={<MapIcon className="h-1/2" />}
-                                    value={atUpdateData.location}
-                                    onValueChange={(e) => {
-                                        setAtUpdateData((prevData) => ({
-                                            ...prevData,
-                                            location: e,
-                                        }));
-                                    }}
-                                />
-                            </div>
-                            <div className="mb-10">
-                                <Input
-                                    type="date"
-                                    label="Data de Aniversário"
-                                    isClearable={true}
-                                    variant="bordered"
-                                    classNames={{
-                                        inputWrapper: 'border-color',
-                                    }}
-                                    startContent={
-                                        <CakeIcon className="h-1/2" />
-                                    }
-                                    value={atUpdateData.birthDate}
-                                    onValueChange={(e) => {
-                                        setAtUpdateData((prevData) => ({
-                                            ...prevData,
-                                            birthDate: e,
-                                        }));
-                                    }}
-                                />
-                            </div>
-                            <div>
-                                <Textarea
-                                    placeholder="Fale um pouco sobre você"
-                                    label="Biografia"
-                                    variant="bordered"
-                                    classNames={{
-                                        inputWrapper: 'border-color',
-                                    }}
-                                    value={atUpdateData.biography}
-                                    onValueChange={(e) => {
-                                        setAtUpdateData((prevData) => ({
-                                            ...prevData,
-                                            biography: e,
-                                        }));
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        <div className="flex justify-end gap-x-4">
+                            {!atUpdateData ? (
+                                ''
+                            ) : (
+                                <>
+                                    <div className="mb-6">
+                                        <Input
+                                            type="text"
+                                            placeholder="Nome Completo"
+                                            isClearable={true}
+                                            variant="bordered"
+                                            classNames={{
+                                                inputWrapper: 'border-color',
+                                            }}
+                                            startContent={
+                                                <UserIcon className="h-1/2" />
+                                            }
+                                            value={atUpdateData.fullName}
+                                            onValueChange={(e) => {
+                                                setAtUpdateData((prevData) => ({
+                                                    ...prevData,
+                                                    fullName: e,
+                                                }));
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="mb-6">
+                                        <Input
+                                            type="text"
+                                            placeholder="Localização"
+                                            isClearable={true}
+                                            variant="bordered"
+                                            classNames={{
+                                                inputWrapper: 'border-color',
+                                            }}
+                                            startContent={
+                                                <MapIcon className="h-1/2" />
+                                            }
+                                            value={atUpdateData.location}
+                                            onValueChange={(e) => {
+                                                setAtUpdateData((prevData) => ({
+                                                    ...prevData,
+                                                    location: e,
+                                                }));
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="mb-6">
+                                        <Input
+                                            type="date"
+                                            placeholder="Data de Aniversário"
+                                            isClearable={true}
+                                            variant="bordered"
+                                            classNames={{
+                                                inputWrapper: 'border-color',
+                                            }}
+                                            startContent={
+                                                <CakeIcon className="h-1/2" />
+                                            }
+                                            value={atUpdateData.birthDate}
+                                            onValueChange={(e) => {
+                                                setAtUpdateData((prevData) => ({
+                                                    ...prevData,
+                                                    birthDate: e,
+                                                }));
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Textarea
+                                            placeholder="Fale um pouco sobre você"
+                                            label="Biografia"
+                                            variant="bordered"
+                                            classNames={{
+                                                inputWrapper: 'border-color',
+                                            }}
+                                            value={atUpdateData.biography}
+                                            onValueChange={(e) => {
+                                                setAtUpdateData((prevData) => ({
+                                                    ...prevData,
+                                                    biography: e,
+                                                }));
+                                            }}
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </ModalBody>
+                        <ModalFooter className="flex justify-end gap-x-4">
                             <Button
-                                size="lg"
-                                color="default"
+                                color="secondary"
+                                variant="bordered"
+                                className="border-none"
                                 onClick={() => {
                                     setIsActive(false);
                                     setAtUpdateData(userData);
@@ -175,7 +185,6 @@ const UpdateProfile: React.FC<ProfileUpdateProps> = ({
                                 <XMarkIcon className="h-1/2" />
                             </Button>
                             <Button
-                                size="lg"
                                 color="primary"
                                 onClick={updateProfileData}
                                 style={{ lineHeight: '1.5' }}
@@ -184,11 +193,11 @@ const UpdateProfile: React.FC<ProfileUpdateProps> = ({
                                 Salvar
                                 <PencilIcon className="h-1/2" />
                             </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
+                        </ModalFooter>
+                    </>
+                )}
+            </ModalContent>
+        </Modal>
     );
 };
 

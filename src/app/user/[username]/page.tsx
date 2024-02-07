@@ -29,15 +29,11 @@ const UserPage = ({ params }: { params: { username: string } }) => {
     const [bannerLoading, setBannerLoading] = useState(true);
     const [bannerUrl, setBannerUrl] = useState(``);
     const [session, setSession] = useState<Session | null>();
-
     const [openedEditPopup, setOpenedEditPopup] = useState(false);
-
     const [followerPopup, setFollowerPopup] = useState(false);
     const [followingPopup, setFollowingPopup] = useState(false);
-
     const [avatarLoading, setAvatarLoading] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState(``);
-
     const [currentUploadType, setCurrentUploadType] = useState('');
 
     const isVisitorOwner = async (username: string) => {
@@ -48,14 +44,16 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
     const fetchUserData = async (username: string) => {
         try {
-            const response = await fetch(`/api/search/user/${username}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await fetch(
+                `/api/search/user?username=${username}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
 
-            // For delaying animation
             isVisitorOwner(params.username);
 
             if (response.ok) {
@@ -63,16 +61,21 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
                 // banner
                 setBannerUrl(
-                    `/api/image/banner/${data.user.id}?timestamp=${Date.now()}`
+                    `/api/image/banner/${
+                        data.users[0].id
+                    }?timestamp=${Date.now()}`
                 );
                 setBannerLoading(false);
 
                 // avatar
                 setAvatarUrl(
-                    `/api/image/avatar/${data.user.id}?timestamp=${Date.now()}`
+                    `/api/image/avatar/${
+                        data.users[0].id
+                    }?timestamp=${Date.now()}`
                 );
                 setAvatarLoading(false);
-                setProfileData(data.user);
+                console.log(data.users);
+                setProfileData(data.users[0]);
             }
         } catch (e: any) {
             console.error('Error:', e.message);
@@ -155,55 +158,56 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
     return (
         <main className="flex h-full flex-col">
-            <div
-                className="w-full h-full border-b image-edit flex items-center justify-center sm:h-1/3 md:h-1/2 lg:h-1/2"
-                style={{
-                    overflow: 'hidden',
-                }}
-            >
-                {!isOwner ? (
-                    ''
-                ) : (
-                    <div className="image-edit-buttons absolute gap-x-4 flex">
-                        <Button
-                            variant="bordered"
-                            color="secondary"
-                            isIconOnly={true}
-                            style={{ padding: '6px' }}
-                        >
-                            <XMarkIcon />
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                setCurrentUploadType('banner');
-                                handleFileSelect();
+            <div className="n-scroll">
+                <div className="w-full h-96">
+                    <div
+                        className="w-full h-full border-b image-edit flex items-center justify-center"
+                        style={{
+                            overflow: 'hidden',
+                        }}
+                    >
+                        {!isOwner ? (
+                            ''
+                        ) : (
+                            <div className="image-edit-buttons absolute gap-x-4 flex">
+                                <Button
+                                    variant="bordered"
+                                    color="secondary"
+                                    isIconOnly={true}
+                                    style={{ padding: '6px' }}
+                                >
+                                    <XMarkIcon />
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        setCurrentUploadType('banner');
+                                        handleFileSelect();
+                                    }}
+                                    variant="bordered"
+                                    color="secondary"
+                                    isIconOnly={true}
+                                    style={{ padding: '6px' }}
+                                >
+                                    <PhotoIcon />
+                                </Button>
+                            </div>
+                        )}
+                        <Image
+                            alt="default"
+                            isLoading={bannerLoading}
+                            src={bannerUrl}
+                            className={isOwner ? 'image-img' : ''}
+                            style={{
+                                width: '100%',
+                                height: 'auto',
+                                borderRadius: '0px',
                             }}
-                            variant="bordered"
-                            color="secondary"
-                            isIconOnly={true}
-                            style={{ padding: '6px' }}
-                        >
-                            <PhotoIcon />
-                        </Button>
+                            removeWrapper={true}
+                        ></Image>
                     </div>
-                )}
-                <Image
-                    alt="default"
-                    isLoading={bannerLoading}
-                    src={bannerUrl}
-                    className={isOwner ? 'image-img' : ''}
-                    style={{
-                        width: '100%',
-                        height: 'auto',
-                        borderRadius: '0px',
-                        display: 'block',
-                    }}
-                    removeWrapper={true}
-                ></Image>
-            </div>
+                </div>
 
-            <div>
-                <div className="flex pt-6 2xl:px-60 lg:px-40 md:px-10 sm:px-6">
+                <div className="flex pt-6 lg:px-60 md:px-10 sm:px-2">
                     <div className="flex items-end justify-between grow">
                         <div className="w-full">
                             <div className="flex sm:flex-col md:flex-row lg:flex-row">
@@ -262,10 +266,11 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                         )}
                                     </div>
                                 </div>
+
                                 <div>
                                     {/* Div to make the content be same height as image */}
                                     <div>
-                                        <h1 className="sm:text-3xl md:text-md lg:text-6xl sm:mt-4 md:mt-0 lg:mt-0">
+                                        <h1 className="sm:mt-4 md:mt-0 lg:mt-0">
                                             {!profileData.username ? (
                                                 <span className="pulsating-span">
                                                     usernamereal
@@ -449,8 +454,9 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                 </div>
                             </div>
                         </div>
+
                         <div className="flex justify-start h-full pt-3">
-                            <div className="flex gap-x-4">
+                            <div className="flex gap-x-4 h-14">
                                 {isOwner === null && (
                                     <span className="pulsating-span">
                                         Seguir doidadod
@@ -461,8 +467,7 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                 )}
                                 {isOwner !== null && isOwner && (
                                     <Button
-                                        variant="bordered"
-                                        color="secondary"
+                                        color="default"
                                         style={{ lineHeight: '1.5' }}
                                         onClick={() => setOpenedEditPopup(true)}
                                         endContent={
@@ -482,29 +487,8 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                         </div>
                     </div>
                 </div>
-                <div className="w-full">
-                    <Tabs aria-label="Options">
-                        <Tab key="photos" title="Photos">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit, sed do eiusmod tempor incididunt ut labore et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis
-                            nostrud exercitation ullamco laboris nisi ut aliquip
-                            ex ea commodo consequat.
-                        </Tab>
-                        <Tab key="music" title="Music">
-                            Ut enim ad minim veniam, quis nostrud exercitation
-                            ullamco laboris nisi ut aliquip ex ea commodo
-                            consequat. Duis aute irure dolor in reprehenderit in
-                            voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur.
-                        </Tab>
-                        <Tab key="videos" title="Videos">
-                            Excepteur sint occaecat cupidatat non proident, sunt
-                            in culpa qui officia deserunt mollit anim id est
-                            laborum.
-                        </Tab>
-                    </Tabs>
-                </div>
+
+                <div className="h-40"></div>
             </div>
 
             {/* Hidden components that are activated via functions */}

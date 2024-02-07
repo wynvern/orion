@@ -10,18 +10,25 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum UserStatus {
+    Online
+    Offline
+    Away
+    NotDisturb
+}
+
 model User {
-    id            String   @id @default(uuid())
-    username      String   @unique
-    email         String   @unique
+    id            String     @id @default(uuid())
+    username      String     @unique
+    email         String     @unique
     fullName      String?
     biography     String?
     location      String?
-    birthDate     String?
-    status        String   @default("Online")
+    birthDate     DateTime?
+    status        UserStatus @default(Online)
     password      String
-    createdAt     DateTime @default(now())
-    emailVerified Boolean  @default(false)
+    createdAt     DateTime   @default(now())
+    emailVerified Boolean    @default(false)
 
     posts         Post[]
     comments      Comment[]
@@ -75,8 +82,12 @@ model Comment {
     updatedAt DateTime @updatedAt
     userId    String
     postId    String
-    user      User     @relation(fields: [userId], references: [id])
-    post      Post     @relation(fields: [postId], references: [id])
+    parentId  String?
+
+    user    User      @relation(fields: [userId], references: [id])
+    post    Post      @relation(fields: [postId], references: [id])
+    parent  Comment?  @relation("ParentComment", fields: [parentId], references: [id])
+    replies Comment[] @relation("ParentComment")
 }
 
 model Follower {

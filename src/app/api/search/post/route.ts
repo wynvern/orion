@@ -3,10 +3,9 @@ import { db } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
-export const GET = async (
-    req: Request,
-    { params }: { params: { username: string } }
-) => {
+export const GET = async (req: Request) => {
+    const url = new URL(req.url);
+
     try {
         const session = await getServerSession(authOptions);
 
@@ -21,42 +20,43 @@ export const GET = async (
             );
         }
 
-        const username = params.username;
+        const content = url.searchParams.get('content');
 
-        if (!username) {
+        if (!content) {
             return NextResponse.json(
                 {
                     user: null,
-                    message: 'username not provided',
-                    type: 'username-not-provided',
+                    message: 'content not provided',
+                    type: 'content-not-provided',
                 },
                 { status: 400 }
             );
         }
 
-        const userFetched = await db.user.findUnique({
+        const fetchedPosts = await db.post.findMany({
             where: {
-                username: username,
+                content: { contains: content },
             },
             include: {
-                followers: true,
-                following: true,
+                likes: true,
+                bookmarks: true,
+                user: true,
             },
         });
-        if (!userFetched) {
+
+        if (!fetchedPosts) {
             return NextResponse.json(
                 {
                     user: null,
-                    message: 'User not found',
-                    type: 'user-not-found',
+                    message: 'No post not found',
+                    type: 'no-post-not-found',
                 },
                 { status: 404 }
             );
         }
-        const { password: newUserPassword, ...rest } = userFetched;
 
         return NextResponse.json(
-            { user: rest, message: 'User retreived succsessfully' },
+            { posts: fetchedPosts, message: 'User retreived succsessfully' },
             { status: 200 }
         );
     } catch (e) {

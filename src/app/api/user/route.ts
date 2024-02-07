@@ -170,6 +170,13 @@ export const PATCH = async (req: Request) => {
             hashedNewPassword = await hash(newPassword, 10);
         }
 
+        const adjustedBirthDate = birthDate
+            ? new Date(birthDate)
+            : existingUser.birthDate;
+        if (adjustedBirthDate) {
+            adjustedBirthDate.setHours(23, 59, 59, 999);
+        }
+
         const updatedUser = await db.user.update({
             where: {
                 id: session.user.id,
@@ -179,7 +186,7 @@ export const PATCH = async (req: Request) => {
                 username: username || existingUser.username,
                 fullName: fullName || existingUser.fullName,
                 biography: biography || existingUser.biography,
-                birthDate: birthDate || existingUser.birthDate,
+                birthDate: adjustedBirthDate,
                 location: location || existingUser.location,
                 ...(newPassword && { password: hashedNewPassword }),
             },
@@ -190,6 +197,7 @@ export const PATCH = async (req: Request) => {
             { status: 201 }
         );
     } catch (e) {
+        console.error(e);
         return Response.json(
             { message: 'Someting went wrong...' },
             { status: 500 }

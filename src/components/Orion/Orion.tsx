@@ -17,7 +17,10 @@ export default function Orion({
     children: React.ReactNode;
 }>) {
     const pathname = usePathname();
-    const enabledSidebar = pathname === '/' || pathname.includes('/user');
+    const enabledSidebar =
+        pathname === '/' ||
+        pathname.includes('/user') ||
+        pathname.includes('/search');
 
     return (
         <NextUIProvider className="h-full">

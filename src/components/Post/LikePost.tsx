@@ -99,10 +99,15 @@ const LikePost: React.FC<LikePostProps> = ({ post }) => {
             color={liked ? 'danger' : 'secondary'}
             onClick={handleLike}
             style={{
-                padding: '8px',
                 border: 'none',
             }}
-            startContent={liked ? <HeartIconFilled /> : <HeartIcon />}
+            startContent={
+                liked ? (
+                    <HeartIconFilled className="h-2/3" />
+                ) : (
+                    <HeartIcon className="h-2/3" />
+                )
+            }
         >
             {realtimeUpdate}
         </Button>

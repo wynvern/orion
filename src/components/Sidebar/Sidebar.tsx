@@ -41,6 +41,7 @@ const Sidebar = () => {
                         <Button
                             variant="bordered"
                             style={{ border: 'none', padding: '6px' }}
+                            onClick={() => router.push('/search')}
                             color={
                                 path.includes('/search')
                                     ? 'secondary'

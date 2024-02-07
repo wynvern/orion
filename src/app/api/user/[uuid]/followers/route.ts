@@ -37,20 +37,20 @@ export const GET = async (
         }
 
         // Find the users that are following the specified user
-        const followers = await db.follower.findMany({
+        const followers = await db.user.findMany({
             where: {
-                followingId: params.uuid,
-            },
-            include: {
-                follower: {
-                    select: {
-                        id: true,
-                        username: true,
-                        fullName: true,
-                        biography: true,
-                        status: true,
+                followers: {
+                    some: {
+                        followingId: params.uuid,
                     },
                 },
+            },
+            select: {
+                id: true,
+                username: true,
+                fullName: true,
+                biography: true,
+                status: true,
             },
         });
 

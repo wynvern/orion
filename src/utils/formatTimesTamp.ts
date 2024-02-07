@@ -14,10 +14,11 @@ const monthNames = [
 ];
 
 export default function formatTimestamp(timestamp: any) {
-    const data = new Date(timestamp);
-    const dia = data.getDate();
-    const mes = monthNames[data.getMonth()];
-    const ano = data.getFullYear();
+    const date = new Date(timestamp);
+
+    const dia = date.getUTCDate();
+    const mes = monthNames[date.getUTCMonth()];
+    const ano = date.getFullYear();
 
     return `${dia} de ${mes} de ${ano}`;
 }

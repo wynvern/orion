@@ -25,11 +25,9 @@ const FollowUser: React.FC<FollowUserProps> = ({ userData }) => {
                 const data = await response.json();
                 const session = await getSession();
 
-                const isFollowingUser = data.data.some(
-                    (follower: { followerId: string }) => {
-                        return follower.followerId === session?.user.id;
-                    }
-                );
+                const isFollowingUser = data.data.some((user: UserType) => {
+                    return user.id === session?.user.id;
+                });
 
                 return isFollowingUser;
             }

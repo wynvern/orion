@@ -99,11 +99,14 @@ const BookmarkPost: React.FC<BookmarkPostProps> = ({ post }) => {
             color="secondary"
             onClick={handleBookmark}
             style={{
-                padding: '8px',
                 border: 'none',
             }}
             startContent={
-                bookmarked ? <BookmarkIconFilled /> : <BookmarkIcon />
+                bookmarked ? (
+                    <BookmarkIconFilled className="h-2/3" />
+                ) : (
+                    <BookmarkIcon className="h-2/3" />
+                )
             }
         >
             {realtimeUpdate}
