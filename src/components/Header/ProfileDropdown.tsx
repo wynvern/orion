@@ -39,7 +39,7 @@ const ProfileHeader = () => {
             <Dropdown placement="bottom-end" className="background-bg border-d">
                 <DropdownTrigger>
                     <div className="h-full">
-                        {session ? (
+                        {session?.user.id ? (
                             <Image
                                 alt="default"
                                 src={`/api/image/avatar/${session?.user.id}`}

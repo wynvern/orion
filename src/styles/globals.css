@@ -32,6 +32,16 @@ h1 {
     font-weight: 900;
 }
 
+img,
+svg {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.placeholder::placeholder {
+    color: red;
+}
+
 .n-scroll {
     scrollbar-gutter: stable both-edges;
     overflow: auto;
@@ -198,4 +208,8 @@ input:-webkit-autofill:active {
 
 .nav-mobile {
     border-radius: var(--border-r);
+}
+
+.bg-online {
+    background-color: rgb(87, 224, 59);
 }

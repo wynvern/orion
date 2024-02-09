@@ -149,6 +149,7 @@ const VerifyEmail = () => {
                         isInvalid={codeInvalid.bool}
                         classNames={{
                             inputWrapper: 'border-color rounded-3xl',
+                            input: 'placeholder:text-neutral-600',
                         }}
                         startContent={
                             <ShieldCheckIcon className="h-2/3 ml-4 mr-3" />

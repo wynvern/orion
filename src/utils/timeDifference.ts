@@ -1,21 +1,25 @@
 const timeDifference = (timestamp: string) => {
     const currentDate = new Date();
     const postDate = new Date(timestamp);
-    const timeDiffInSeconds = Math.floor(
-        (currentDate.getTime() - postDate.getTime()) / 1000
+
+    // Set both dates to the start of the day to compare just the dates
+    currentDate.setHours(0, 0, 0, 0);
+    postDate.setHours(0, 0, 0, 0);
+
+    const timeDiffInMilliseconds = currentDate.getTime() - postDate.getTime();
+    const timeDiffInDays = Math.floor(
+        timeDiffInMilliseconds / (1000 * 60 * 60 * 24)
     );
 
-    const days = Math.floor(timeDiffInSeconds / 86400);
-
-    if (days === 0) {
+    if (timeDiffInDays === 0) {
         return 'Hoje';
-    } else if (days === 1) {
+    } else if (timeDiffInDays === 1) {
         return 'Ontem';
-    } else if (days <= 7) {
+    } else if (timeDiffInDays <= 7) {
         return 'Na última semana';
-    } else if (days <= 30) {
+    } else if (timeDiffInDays <= 30) {
         return 'No último mês';
-    } else if (days <= 365) {
+    } else if (timeDiffInDays <= 365) {
         return 'No último ano';
     } else {
         return 'Há muito tempo';

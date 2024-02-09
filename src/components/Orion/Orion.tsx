@@ -7,20 +7,43 @@ import SidebarMobile from '../Sidebar/SidebarMobile';
 
 import '../../styles/Toast.css';
 
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider, getSession } from 'next-auth/react';
 import { ToastContainer } from 'react-toastify';
-import path from 'path';
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import { Session } from 'next-auth';
 
 export default function Orion({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const pathname = usePathname();
-    const enabledSidebar =
-        pathname === '/' ||
-        pathname.includes('/user') ||
-        pathname.includes('/search');
+    const pathname = usePathname(),
+        enabledSidebar =
+            pathname === '/' ||
+            pathname.includes('/user') ||
+            pathname.includes('/search') ||
+            pathname.includes('/post') ||
+            pathname.includes('chat'),
+        [session, setSession] = useState<Session | null | undefined>();
+
+    useEffect(() => {
+        const fetchSession = async () => {
+            const data = await getSession();
+
+            setSession(data);
+        };
+
+        fetchSession();
+    }, []);
+
+    useEffect(() => {
+        if (session) {
+            const socket = io('localhost:8000');
+
+            socket.emit('authorize', { auth: session });
+        }
+    }, [session]);
 
     return (
         <NextUIProvider className="h-full">
@@ -30,7 +53,7 @@ export default function Orion({
                         ''
                     ) : (
                         <div
-                            className="flex h-full z-10 background-bg lg:block md:block sm:hidden p-6 pr-0"
+                            className="flex h-full lg:block bg-transparent md:block sm:hidden p-6 pr-0"
                             style={{ width: '100px' }}
                         >
                             <Sidebar></Sidebar>

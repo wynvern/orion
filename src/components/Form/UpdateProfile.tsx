@@ -95,7 +95,9 @@ const UpdateProfile: React.FC<ProfileUpdateProps> = ({
                                             isClearable={true}
                                             variant="bordered"
                                             classNames={{
-                                                inputWrapper: 'border-color',
+                                                inputWrapper:
+                                                    'border-color rounded-3xl',
+                                                input: 'placeholder:text-neutral-600',
                                             }}
                                             startContent={
                                                 <UserIcon className="h-1/2" />
@@ -116,7 +118,9 @@ const UpdateProfile: React.FC<ProfileUpdateProps> = ({
                                             isClearable={true}
                                             variant="bordered"
                                             classNames={{
-                                                inputWrapper: 'border-color',
+                                                inputWrapper:
+                                                    'border-color rounded-3xl',
+                                                input: 'placeholder:text-neutral-600',
                                             }}
                                             startContent={
                                                 <MapIcon className="h-1/2" />
@@ -137,7 +141,9 @@ const UpdateProfile: React.FC<ProfileUpdateProps> = ({
                                             isClearable={true}
                                             variant="bordered"
                                             classNames={{
-                                                inputWrapper: 'border-color',
+                                                inputWrapper:
+                                                    'border-color rounded-3xl',
+                                                input: 'placeholder:text-neutral-600',
                                             }}
                                             startContent={
                                                 <CakeIcon className="h-1/2" />

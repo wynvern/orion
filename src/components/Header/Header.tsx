@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Ref } from 'react';
 import ProfileHeader from './ProfileDropdown';
 import { Image } from '@nextui-org/react';
 
 interface HeaderProps {
-    scrollY: number;
+    reference: any;
 }
 
-const Header: React.FC<HeaderProps> = ({ scrollY }) => {
+const Header: React.FC<HeaderProps> = ({ reference }) => {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
 
     const scrollThreshold = 20;
 
     useEffect(() => {
-        setPrevScrollPos(scrollY);
+        const handleScroll = () => {
+            setPrevScrollPos(reference.current.scrollTop);
 
-        const scrollHandler = () => {
-            const scrollDifference = scrollY - prevScrollPos;
+            const scrollDifference =
+                reference.current.scrollTop - prevScrollPos;
 
             if (scrollDifference > scrollThreshold) {
                 // Scrolling down
@@ -27,8 +28,8 @@ const Header: React.FC<HeaderProps> = ({ scrollY }) => {
             }
         };
 
-        scrollHandler();
-    }, [scrollY, prevScrollPos]);
+        reference.current.addEventListener('scroll', handleScroll);
+    });
 
     return (
         <div

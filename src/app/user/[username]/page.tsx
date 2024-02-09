@@ -3,8 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Image, Link, Tab, Tabs } from '@nextui-org/react';
 import {
+    BookmarkIcon,
     CakeIcon,
     CalendarIcon,
+    CubeIcon,
+    HeartIcon,
     MapIcon,
     PencilIcon,
     PhotoIcon,
@@ -19,6 +22,7 @@ import UpdateProfile from '@/components/Form/UpdateProfile';
 import FollowingList from '@/components/Form/FollowingList';
 import { Session } from 'next-auth';
 import FollowerList from '@/components/Form/FollowerList';
+import PostItems from '@/components/Post/PostItems';
 
 const UserPage = ({ params }: { params: { username: string } }) => {
     const [profileData, setProfileData] = useState<UserType>({
@@ -35,6 +39,11 @@ const UserPage = ({ params }: { params: { username: string } }) => {
     const [avatarLoading, setAvatarLoading] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState(``);
     const [currentUploadType, setCurrentUploadType] = useState('');
+
+    const [likedPosts, setLikedPosts] = useState([]);
+    const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
+    const [postedPosts, setPostedPosts] = useState([]);
+    const [selectedPosts, setSelectedPosts] = useState('posted');
 
     const isVisitorOwner = async (username: string) => {
         const session = await getSession();
@@ -74,7 +83,12 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                     }?timestamp=${Date.now()}`
                 );
                 setAvatarLoading(false);
-                console.log(data.users);
+
+                // User posts, etc...
+                await fecthPosts('bookmarked', data.users[0].id);
+                await fecthPosts('liked', data.users[0].id);
+                await fecthPosts('posted', data.users[0].id);
+
                 setProfileData(data.users[0]);
             }
         } catch (e: any) {
@@ -90,6 +104,30 @@ const UserPage = ({ params }: { params: { username: string } }) => {
     const handleFileSelect = async () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
+        }
+    };
+
+    const fecthPosts = async (type: string, userId: string) => {
+        try {
+            const response = await fetch(
+                `/api/search/post/${type}?userId=${userId}`
+            );
+            if (response.ok) {
+                const data = await response.json();
+
+                console.log(type, data);
+
+                switch (type) {
+                    case 'bookmarked':
+                        setBookmarkedPosts(data.posts);
+                    case 'liked':
+                        setLikedPosts(data.posts);
+                    case 'posted':
+                        setPostedPosts(data.posts);
+                }
+            }
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -153,343 +191,327 @@ const UserPage = ({ params }: { params: { username: string } }) => {
             } catch (error: any) {
                 console.error('Error reading image file:', error.message);
             }
+        } else {
+            setAvatarLoading(false);
+            setBannerLoading(false);
         }
     };
 
     return (
-        <main className="flex h-full flex-col">
-            <div className="n-scroll">
-                <div className="w-full h-96">
-                    <div
-                        className="w-full h-full border-b image-edit flex items-center justify-center"
+        <main className="flex flex-col">
+            <div className="w-full lg:h-96 md:h-96 sm:h-60">
+                <div
+                    className="w-full h-full image-edit flex items-center justify-center rounded-lg"
+                    style={{
+                        overflow: 'hidden',
+                    }}
+                >
+                    {!isOwner ? (
+                        ''
+                    ) : (
+                        <div className="image-edit-buttons absolute gap-x-4 flex">
+                            <Button
+                                variant="bordered"
+                                color="secondary"
+                                isIconOnly={true}
+                                style={{ padding: '6px', border: 'none' }}
+                            >
+                                <XMarkIcon />
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    setCurrentUploadType('banner');
+                                    handleFileSelect();
+                                }}
+                                variant="bordered"
+                                color="secondary"
+                                isIconOnly={true}
+                                style={{ padding: '6px', border: 'none' }}
+                            >
+                                <PhotoIcon />
+                            </Button>
+                        </div>
+                    )}
+
+                    <Image
+                        alt="default"
+                        isLoading={bannerLoading}
+                        src={bannerUrl}
+                        className={isOwner ? 'image-img' : ''}
                         style={{
-                            overflow: 'hidden',
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '0px',
+                            objectFit: 'cover',
                         }}
-                    >
-                        {!isOwner ? (
-                            ''
-                        ) : (
-                            <div className="image-edit-buttons absolute gap-x-4 flex">
-                                <Button
-                                    variant="bordered"
-                                    color="secondary"
-                                    isIconOnly={true}
-                                    style={{ padding: '6px' }}
-                                >
-                                    <XMarkIcon />
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        setCurrentUploadType('banner');
-                                        handleFileSelect();
-                                    }}
-                                    variant="bordered"
-                                    color="secondary"
-                                    isIconOnly={true}
-                                    style={{ padding: '6px' }}
-                                >
-                                    <PhotoIcon />
-                                </Button>
-                            </div>
-                        )}
-                        <Image
-                            alt="default"
-                            isLoading={bannerLoading}
-                            src={bannerUrl}
-                            className={isOwner ? 'image-img' : ''}
-                            style={{
-                                width: '100%',
-                                height: 'auto',
-                                borderRadius: '0px',
-                            }}
-                            removeWrapper={true}
-                        ></Image>
-                    </div>
+                        removeWrapper={true}
+                    ></Image>
                 </div>
-
-                <div className="flex pt-6 lg:px-60 md:px-10 sm:px-2">
-                    <div className="flex items-end justify-between grow">
-                        <div className="w-full">
-                            <div className="flex sm:flex-col md:flex-row lg:flex-row">
-                                <div className="w-40 h-40 mr-6">
-                                    <div className="avatar-edit flex items-center justify-center h-full w-full">
-                                        {!isOwner ? (
-                                            ''
-                                        ) : (
-                                            <div className="avatar-edit-buttons absolute gap-x-4 flex z-10">
-                                                <Button
-                                                    variant="bordered"
-                                                    color="secondary"
-                                                    isIconOnly={true}
-                                                    style={{ padding: '6px' }}
-                                                >
-                                                    <XMarkIcon />
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        setCurrentUploadType(
-                                                            'avatar'
-                                                        );
-                                                        handleFileSelect();
-                                                    }}
-                                                    variant="bordered"
-                                                    color="secondary"
-                                                    isIconOnly={true}
-                                                    style={{ padding: '6px' }}
-                                                >
-                                                    <PhotoIcon />
-                                                </Button>
-                                            </div>
-                                        )}
-                                        {avatarUrl ? (
-                                            <Image
-                                                alt="default"
-                                                isLoading={avatarLoading}
-                                                src={avatarUrl}
-                                                className={`border-d ${
-                                                    isOwner ? 'avatar-img' : ''
-                                                }`}
-                                                style={{
-                                                    maxWidth: 'auto',
-                                                    height: '100%',
-                                                }}
-                                                removeWrapper={true}
-                                            ></Image>
-                                        ) : (
-                                            <div
-                                                className="pulsating-span"
-                                                style={{
-                                                    aspectRatio: '1 / 1',
-                                                    height: '100%',
-                                                }}
-                                            ></div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div>
-                                    {/* Div to make the content be same height as image */}
-                                    <div>
-                                        <h1 className="sm:mt-4 md:mt-0 lg:mt-0">
-                                            {!profileData.username ? (
-                                                <span className="pulsating-span">
-                                                    usernamereal
-                                                </span>
-                                            ) : (
-                                                profileData.username
-                                            )}
-                                        </h1>
-                                    </div>
-                                    <p className="pt-1">
-                                        {profileData.fullName === undefined ? (
-                                            <span className="pulsating-span">
-                                                usernamereall
-                                            </span>
-                                        ) : profileData.fullName ? (
-                                            profileData.fullName
-                                        ) : (
-                                            ''
-                                        )}
-                                    </p>
-                                    <div className="flex lg:mt-6 md:mt-6 sm:mt-4 gap-x-4 w-full">
-                                        <div className="flex">
-                                            <Link color="secondary">
-                                                <p
-                                                    onClick={() =>
-                                                        setFollowerPopup(true)
-                                                    }
-                                                >
-                                                    {profileData.following ? (
-                                                        <>
-                                                            <b>
-                                                                {
-                                                                    profileData
-                                                                        .following
-                                                                        .length
-                                                                }
-                                                            </b>{' '}
-                                                            Seguidores
-                                                        </>
-                                                    ) : (
-                                                        <span className="pulsating-span">
-                                                            0 Seguindo
-                                                        </span>
-                                                    )}
-                                                </p>
-                                            </Link>
-                                        </div>
-                                        <div className="flex">
-                                            <Link color="secondary">
-                                                <p
-                                                    onClick={() =>
-                                                        setFollowingPopup(true)
-                                                    }
-                                                >
-                                                    {profileData.followers ? (
-                                                        <>
-                                                            <b>
-                                                                {
-                                                                    profileData
-                                                                        .followers
-                                                                        .length
-                                                                }
-                                                            </b>{' '}
-                                                            Seguindo
-                                                        </>
-                                                    ) : (
-                                                        <span className="pulsating-span">
-                                                            0 Seguindo
-                                                        </span>
-                                                    )}
-                                                </p>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                    <div className="pt-6">
-                                        <ul
-                                            style={{ color: '#333' }}
-                                            className="gap-y-3 grid"
-                                        >
-                                            {!profileData.biography ? (
-                                                ''
-                                            ) : (
-                                                <li
-                                                    style={{
-                                                        maxHeight: '50px',
-                                                    }}
-                                                    className="flex items-center gap-x-2"
-                                                >
-                                                    <div
-                                                        style={{
-                                                            height: '26px',
-                                                        }}
-                                                    >
-                                                        <PencilIcon
-                                                            className="h-full"
-                                                            style={{
-                                                                padding: '2px',
-                                                            }}
-                                                        />
-                                                    </div>
-                                                    {profileData.biography}
-                                                </li>
-                                            )}
-                                            {!profileData.birthDate ? (
-                                                ''
-                                            ) : (
-                                                <li
-                                                    style={{
-                                                        maxHeight: '50px',
-                                                    }}
-                                                    className="flex items-center gap-x-2"
-                                                >
-                                                    <div
-                                                        style={{
-                                                            height: '26px',
-                                                        }}
-                                                    >
-                                                        <CakeIcon
-                                                            className="h-full"
-                                                            style={{
-                                                                padding: '2px',
-                                                            }}
-                                                        />
-                                                    </div>
-                                                    {`Nasceu em ${formatTimestamp(
-                                                        profileData.birthDate
-                                                    )}`}
-                                                </li>
-                                            )}
-                                            {!profileData.location ? (
-                                                ''
-                                            ) : (
-                                                <li
-                                                    style={{
-                                                        maxHeight: '50px',
-                                                    }}
-                                                    className="flex items-center gap-x-2"
-                                                >
-                                                    <div
-                                                        style={{
-                                                            height: '26px',
-                                                        }}
-                                                    >
-                                                        <MapIcon className="h-full" />
-                                                    </div>
-                                                    {profileData.location}
-                                                </li>
-                                            )}
-                                            {profileData.createdAt ? (
-                                                <li
-                                                    style={{
-                                                        maxHeight: '50px',
-                                                    }}
-                                                    className="flex items-center gap-x-2"
-                                                >
-                                                    <div
-                                                        style={{
-                                                            height: '26px',
-                                                        }}
-                                                    >
-                                                        <CalendarIcon className="h-full" />
-                                                    </div>
-                                                    {`Entrou em ${formatTimestamp(
-                                                        profileData.createdAt
-                                                    )}`}
-                                                </li>
-                                            ) : (
-                                                <span className="pulsating-span">
-                                                    Entrou em 20 de 20 de 2000
-                                                </span>
-                                            )}
-                                            {profileData.createdAt ? (
-                                                ''
-                                            ) : (
-                                                <span className="pulsating-span">
-                                                    Entrou em 20 de 20 de 2000
-                                                </span>
-                                            )}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-start h-full pt-3">
-                            <div className="flex gap-x-4 h-14">
-                                {isOwner === null && (
-                                    <span className="pulsating-span">
-                                        Seguir doidadod
-                                    </span>
-                                )}
-                                {isOwner !== null && !isOwner && (
-                                    <FollowUser userData={profileData} />
-                                )}
-                                {isOwner !== null && isOwner && (
-                                    <Button
-                                        color="default"
-                                        style={{ lineHeight: '1.5' }}
-                                        onClick={() => setOpenedEditPopup(true)}
-                                        endContent={
-                                            <PencilIcon className="h-1/2" />
-                                        }
-                                    >
-                                        Editar Perfil
-                                    </Button>
-                                )}
-                                {isOwner !== null && !isOwner && <StartDM />}
-                                {isOwner === null && (
-                                    <span className="pulsating-span">
-                                        Place
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="h-40"></div>
             </div>
+
+            <div className="flex pt-6 lg:px-60 md:px-10 sm:px-6">
+                <div className="flex items-end justify-between grow">
+                    <div className="w-full lg:-translate-y-0 md:-translate-y-0 sm:-translate-y-20 z-50">
+                        <div className="flex sm:flex-col md:flex-row lg:flex-row">
+                            <div className="w-40 h-40 mr-6">
+                                <div className="avatar-edit flex items-center justify-center h-full w-full relative">
+                                    {!isOwner ? (
+                                        ''
+                                    ) : (
+                                        <div className="avatar-edit-buttons absolute gap-x-4 flex z-10">
+                                            <Button
+                                                variant="bordered"
+                                                color="secondary"
+                                                isIconOnly={true}
+                                                style={{
+                                                    padding: '6px',
+                                                    border: 'none',
+                                                }}
+                                            >
+                                                <XMarkIcon />
+                                            </Button>
+                                            <Button
+                                                onClick={() => {
+                                                    setCurrentUploadType(
+                                                        'avatar'
+                                                    );
+                                                    handleFileSelect();
+                                                }}
+                                                variant="bordered"
+                                                color="secondary"
+                                                isIconOnly={true}
+                                                style={{
+                                                    padding: '6px',
+                                                    border: 'none',
+                                                }}
+                                            >
+                                                <PhotoIcon />
+                                            </Button>
+                                        </div>
+                                    )}
+                                    {profileData.status ? (
+                                        <div
+                                            className={`absolute w-6 h-6 bottom-0 right-0 rounded-full translate-x-1 translate-y-1 z-50 ${
+                                                profileData.status === 'Online'
+                                                    ? 'bg-online'
+                                                    : 'transparent'
+                                            }`}
+                                        ></div>
+                                    ) : (
+                                        ''
+                                    )}
+                                    {avatarUrl ? (
+                                        <Image
+                                            alt="default"
+                                            isLoading={avatarLoading}
+                                            src={avatarUrl}
+                                            className={`${
+                                                isOwner ? 'avatar-img' : ''
+                                            }`}
+                                            style={{
+                                                maxWidth: 'auto',
+                                                height: '100%',
+                                            }}
+                                            removeWrapper={true}
+                                        ></Image>
+                                    ) : (
+                                        <div
+                                            className="pulsating-span"
+                                            style={{
+                                                aspectRatio: '1 / 1',
+                                                height: '100%',
+                                            }}
+                                        ></div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div>
+                                {/* Div to make the content be same height as image */}
+                                <div>
+                                    <h1 className="sm:mt-4 md:mt-0 lg:mt-0">
+                                        {!profileData.username ? (
+                                            <span className="pulsating-span">
+                                                usernamereal
+                                            </span>
+                                        ) : (
+                                            profileData.username
+                                        )}
+                                    </h1>
+                                </div>
+                                <p className="pt-1">
+                                    {profileData.fullName === undefined ? (
+                                        <span className="pulsating-span">
+                                            usernamereall
+                                        </span>
+                                    ) : profileData.fullName ? (
+                                        profileData.fullName
+                                    ) : (
+                                        ''
+                                    )}
+                                </p>
+                                <div className="flex lg:mt-6 md:mt-6 sm:mt-4 gap-x-4 w-full">
+                                    <div className="flex">
+                                        <Link color="secondary">
+                                            <p
+                                                onClick={() =>
+                                                    setFollowerPopup(true)
+                                                }
+                                            >
+                                                {profileData.following ? (
+                                                    <>
+                                                        <b>
+                                                            {
+                                                                profileData
+                                                                    .following
+                                                                    .length
+                                                            }
+                                                        </b>{' '}
+                                                        Seguidores
+                                                    </>
+                                                ) : (
+                                                    <span className="pulsating-span">
+                                                        0 Seguindo
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </Link>
+                                    </div>
+                                    <div className="flex">
+                                        <Link color="secondary">
+                                            <p
+                                                onClick={() =>
+                                                    setFollowingPopup(true)
+                                                }
+                                            >
+                                                {profileData.followers ? (
+                                                    <>
+                                                        <b>
+                                                            {
+                                                                profileData
+                                                                    .followers
+                                                                    .length
+                                                            }
+                                                        </b>{' '}
+                                                        Seguindo
+                                                    </>
+                                                ) : (
+                                                    <span className="pulsating-span">
+                                                        0 Seguindo
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-start h-full pt-3">
+                        <div className="flex gap-x-4 h-14">
+                            {isOwner === null && (
+                                <span className="pulsating-span">
+                                    Seguir doidadod
+                                </span>
+                            )}
+                            {isOwner !== null && !isOwner && (
+                                <FollowUser userData={profileData} />
+                            )}
+                            {isOwner !== null && isOwner && (
+                                <Button
+                                    color="default"
+                                    style={{ lineHeight: '1.5' }}
+                                    onClick={() => setOpenedEditPopup(true)}
+                                    endContent={
+                                        <PencilIcon className="h-1/2" />
+                                    }
+                                >
+                                    Editar Perfil
+                                </Button>
+                            )}
+                            {isOwner !== null && !isOwner && <StartDM />}
+                            {isOwner === null && (
+                                <span className="pulsating-span">Place</span>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="w-full flex justify-center pb-4">
+                <div className="flex">
+                    <Button
+                        variant="bordered"
+                        onClick={() => setSelectedPosts('posted')}
+                        color={
+                            selectedPosts === 'posted' ? 'secondary' : 'default'
+                        }
+                        className="border-none h-14"
+                    >
+                        Posts
+                        <CubeIcon className="h-1/2" />
+                    </Button>
+                    <Button
+                        variant="bordered"
+                        onClick={() => setSelectedPosts('bookmarked')}
+                        color={
+                            selectedPosts === 'bookmarked'
+                                ? 'secondary'
+                                : 'default'
+                        }
+                        className="border-none h-14"
+                    >
+                        Bookmarks
+                        <BookmarkIcon className="h-1/2" />
+                    </Button>
+                    <Button
+                        variant="bordered"
+                        onClick={() => setSelectedPosts('liked')}
+                        color={
+                            selectedPosts === 'liked' ? 'secondary' : 'default'
+                        }
+                        className="border-none h-14"
+                    >
+                        Likes
+                        <HeartIcon className="h-1/2" />
+                    </Button>
+                </div>
+            </div>
+
+            {profileData.id ? (
+                <div className="flex h-full flex-col items-center pt-10 lg:px-60 md:px-40 sm:px-2 n-scroll h-min">
+                    {selectedPosts === 'posted' && (
+                        <PostItems
+                            session={session}
+                            posts={postedPosts}
+                            handleUpdate={() =>
+                                fecthPosts('posted', profileData.id)
+                            }
+                        />
+                    )}
+                    {selectedPosts === 'liked' && (
+                        <PostItems
+                            session={session}
+                            posts={likedPosts}
+                            handleUpdate={() =>
+                                fecthPosts('liked', profileData.id)
+                            }
+                        />
+                    )}
+                    {selectedPosts === 'bookmarked' && (
+                        <PostItems
+                            session={session}
+                            posts={bookmarkedPosts}
+                            handleUpdate={() =>
+                                fecthPosts('bookmarked', profileData.id)
+                            }
+                        />
+                    )}
+                </div>
+            ) : (
+                ''
+            )}
 
             {/* Hidden components that are activated via functions */}
             <input

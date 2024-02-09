@@ -5,6 +5,8 @@ import {
     ChatBubbleOvalLeftIcon,
 } from '@heroicons/react/24/outline';
 import {
+    ChevronLeftIcon,
+    ChevronRightIcon,
     EllipsisHorizontalIcon,
     PencilIcon,
     ShareIcon,
@@ -18,12 +20,16 @@ import {
     DropdownTrigger,
     Image,
     Link,
+    ScrollShadow,
 } from '@nextui-org/react';
 import { Session } from 'next-auth';
 import React, { useState } from 'react';
 import DeletePost from '../Form/deletePost';
 import LikePost from './LikePost';
 import BookmarkPost from './BookmarkPost';
+import ImageIndicator from './ImageIndicator';
+import { useRouter } from 'next/navigation';
+import PostComments from './PostComments';
 
 interface PostItemsProps {
     posts: Post[];
@@ -38,22 +44,58 @@ const PostItems: React.FC<PostItemsProps> = ({
 }) => {
     const [deletePostVisible, setDeletePostVisible] = useState(false);
     const [deletePostUuid, setDeletePostUuid] = useState('');
+    const [imageIndices, setImageIndices] = useState<number[]>(
+        new Array(posts.length).fill(1)
+    );
 
-    return posts.map((post: Post) => (
+    const router = useRouter();
+
+    const handleImageIndexChange = (index: number, postIndex: number) => {
+        const newIndices = [...imageIndices];
+        newIndices[postIndex] = index;
+        setImageIndices(newIndices);
+    };
+
+    return posts.map((post: Post, index: number) => (
         <React.Fragment key={post.id}>
             <div
                 key={post.id}
                 className="border-d flex sm:flex-col md:flex-col lg:flex-row w-full mb-10 sm:mb-6 md:mb-10 lg:mb-20 overflow-hidden"
             >
-                {[...Array(post.images)].map((_, i) => (
+                <div
+                    className="post-image-top sm:post-image-top md:post-image-top lg:post-image-left sm:w-full md:w-full lg:w-1/2 relative flex justify-center items-center"
+                    style={{
+                        objectFit: 'cover',
+                        aspectRatio: '1 / 1',
+                    }}
+                >
                     <div
-                        className="post-image-top sm:post-image-top md:post-image-top lg:post-image-left sm:w-full md:w-full lg:w-1/2 "
-                        key={i}
+                        className={`absolute left-8 z-50 ${
+                            post?.images <= 1 ? 'hidden' : 'visible'
+                        }`}
+                    >
+                        <Button
+                            isIconOnly={true}
+                            onClick={() => {
+                                handleImageIndexChange(
+                                    imageIndices[index] - 1,
+                                    index
+                                );
+                            }}
+                            color="secondary"
+                            variant="bordered"
+                            className="border-none"
+                        >
+                            <ChevronLeftIcon className="h-2/3" />
+                        </Button>
+                    </div>
+                    <div
+                        className="h-full w-full relative rounded-none"
+                        onDoubleClick={() => router.push(`/post/${post.id}`)}
                     >
                         <Image
-                            src={`/api/image/post/${post.id}/${i + 1}`}
+                            src={`/api/image/post/${post.id}/${imageIndices[index]}`}
                             alt="Post Image"
-                            key={i}
                             removeWrapper={true}
                             className="h-full w-full relative rounded-none"
                             style={{
@@ -62,8 +104,36 @@ const PostItems: React.FC<PostItemsProps> = ({
                             }}
                         />
                     </div>
-                ))}
-
+                    <div
+                        className={`absolute right-8 z-50 ${
+                            post?.images <= 1 ? 'hidden' : 'visible'
+                        }`}
+                    >
+                        <Button
+                            isIconOnly={true}
+                            onClick={() => {
+                                handleImageIndexChange(
+                                    imageIndices[index] + 1,
+                                    index
+                                );
+                            }}
+                            color="secondary"
+                            variant="bordered"
+                            className="border-none"
+                        >
+                            <ChevronRightIcon className="h-2/3" />
+                        </Button>
+                    </div>
+                    <div className="absolute bottom-10 z-50">
+                        <ImageIndicator
+                            images={post.images}
+                            currentImageIndex={imageIndices[index]}
+                            handleIndexChange={(newIndex: number) =>
+                                handleImageIndexChange(newIndex, index)
+                            }
+                        />
+                    </div>
+                </div>
                 <div className="lg:p-6 md:p-6 sm:p-4 sm:pt-6 sm:w-full md:w-full lg:w-1/2 flex sm:block md:block lg:flex justify-between flex-col">
                     <div className="flex w-full">
                         <Link
@@ -98,10 +168,36 @@ const PostItems: React.FC<PostItemsProps> = ({
                                     {formatTimestamp(post.createdAt)}
                                 </p>
                             </div>
-                            <p className="break-all">{post.content}</p>
+                            <Link href={`/post/${post.id}`} color="secondary">
+                                <p className="break-all">{post.content}</p>
+                            </Link>
                         </div>
                     </div>
-                    <div className="flex flex-row justify-around mt-6">
+                    <div className="flex grow overflow-auto flex-col items-center mb-6">
+                        <div className="my-6 w-full">
+                            <b>
+                                <p>Comentários</p>
+                            </b>
+                        </div>
+                        <ScrollShadow className="w-full grow">
+                            <div className="h-20 w-full">
+                                {post?.comments ? (
+                                    <PostComments
+                                        comments={post.comments.slice(0, 4)}
+                                        session={session}
+                                    />
+                                ) : (
+                                    ''
+                                )}
+                            </div>
+                        </ScrollShadow>
+                        <div className="mb-6">
+                            <Link href={`/post/${post.id}`} color="secondary">
+                                <b>Veja mais</b>
+                            </Link>
+                        </div>
+                    </div>
+                    <div className="flex flex-row justify-around">
                         <LikePost post={post} />
                         <Button
                             isIconOnly={true}

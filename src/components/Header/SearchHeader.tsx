@@ -7,11 +7,11 @@ import {
 } from '@heroicons/react/24/solid';
 
 interface SearchHeaderProps {
-    scrollY: number;
+    reference: any;
     onSubmit: (data: string, type: string) => void;
 }
 
-const SearchHeader: React.FC<SearchHeaderProps> = ({ scrollY, onSubmit }) => {
+const SearchHeader: React.FC<SearchHeaderProps> = ({ reference, onSubmit }) => {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
     const [selected, setSelected] = useState('user');
@@ -20,10 +20,11 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ scrollY, onSubmit }) => {
     const scrollThreshold = 20;
 
     useEffect(() => {
-        setPrevScrollPos(scrollY);
+        const handleScroll = () => {
+            setPrevScrollPos(reference.current.scrollTop);
 
-        const scrollHandler = () => {
-            const scrollDifference = scrollY - prevScrollPos;
+            const scrollDifference =
+                reference.current.scrollTop - prevScrollPos;
 
             if (scrollDifference > scrollThreshold) {
                 // Scrolling down
@@ -34,8 +35,8 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ scrollY, onSubmit }) => {
             }
         };
 
-        scrollHandler();
-    }, [scrollY, prevScrollPos]);
+        reference.current.addEventListener('scroll', handleScroll);
+    });
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
@@ -59,8 +60,12 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ scrollY, onSubmit }) => {
                             variant="bordered"
                             value={searchInput}
                             onKeyDown={handleKeyDown}
+                            startContent={
+                                <MagnifyingGlassIcon className="h-2/3 mr-3" />
+                            }
                             classNames={{
-                                inputWrapper: 'border-color rounded-3xl  pl-6',
+                                inputWrapper: 'border-color rounded-3xl pl-6',
+                                input: 'placeholder:text-neutral-600',
                             }}
                             onValueChange={(e) => {
                                 setSearchInput(e);
@@ -72,7 +77,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ scrollY, onSubmit }) => {
                             onSelectionChange={(e) => setSelected(e as string)}
                             size="lg"
                             classNames={{
-                                tabList: 'rounded-3xl border-color h-12',
+                                tabList: 'rounded-3xl border-none h-12',
                                 base: 'h-12',
                             }}
                             radius="full"

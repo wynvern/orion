@@ -14,7 +14,7 @@ const Sidebar = () => {
     const router = useRouter();
 
     return (
-        <div className="h-full w-full flex items-center justify-center p-4">
+        <div className="h-full w-full flex items-center justify-center p-4 rounded-3xl background-bg">
             <nav className="h-full flex flex-col justify-between">
                 <div>
                     <Image

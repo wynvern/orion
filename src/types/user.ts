@@ -1,4 +1,5 @@
 interface UserType {
+    status: string;
     birthDate: any;
     username: string;
     fullName: string | undefined;

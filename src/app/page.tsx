@@ -8,7 +8,7 @@ import { PlusIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { Button } from '@nextui-org/react';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/react';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useEffect, useState } from 'react';
 
 const keyMapping: Record<string, string> = {
@@ -24,7 +24,7 @@ const Home = () => {
     const [newPostPopup, setNewPostPopup] = useState(false);
     const [session, setSession] = useState<Session | null>();
     const [posts, setPosts] = useState([]);
-    const [scrollY, setScrollY] = useState(0);
+    const scrollDivRef = useRef(null);
 
     const fetchPosts = async () => {
         try {
@@ -52,14 +52,10 @@ const Home = () => {
         executeLoad();
     }, []);
 
-    const handleScroll = async (e: any) => {
-        setScrollY(e.target.scrollTop);
-    };
-
     return (
         <main className="flex h-full flex-col items-center justify-between">
             <div className="lg:hidden md:hidden sm:block">
-                <Header scrollY={scrollY} />
+                <Header reference={scrollDivRef} />
             </div>
 
             <div className="fixed lg:bottom-12 md:bottom-12 sm:bottom-20 lg:right-16 md:right-16 sm:right-6 sm:pb-10 md:pb-0 lg:pb-0 z-50">
@@ -78,8 +74,8 @@ const Home = () => {
             </div>
 
             <div
-                className="w-full h-full lg:px-60 md:px-40 sm:px-2 n-scroll"
-                onScroll={(e) => handleScroll(e)}
+                className="w-full h-full lg:px-40 md:px-40 sm:px-2 n-scroll"
+                ref={scrollDivRef}
             >
                 <div className="sm:h-10 md:h-0 lg:h-0"></div>
                 {Object.keys(posts).map((dateKey) => (

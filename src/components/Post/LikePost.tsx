@@ -9,7 +9,7 @@ interface LikePostProps {
 
 const LikePost: React.FC<LikePostProps> = ({ post }) => {
     const [liked, setLiked] = useState(false);
-    const [realtimeUpdate, setRealtimeUpdate] = useState(post.bookmarks.length);
+    const [realtimeUpdate, setRealtimeUpdate] = useState(post.likes.length);
 
     useEffect(() => {
         const fetchFirstTime = async () => {

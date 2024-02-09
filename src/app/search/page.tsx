@@ -9,14 +9,16 @@ import {
 } from '@heroicons/react/24/solid';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const Search = () => {
     const [data, setData] = useState([]);
     const [session, setSession] = useState<Session | null | undefined>();
-    const [scrollY, setScrollY] = useState(0);
+    const scrollDivRef = useRef(null);
     const [searched, setSearched] = useState(false);
     const [type, setType] = useState('user');
+
+    const placeholder = () => {};
 
     useEffect(() => {
         const fetchSession = async () => {
@@ -57,6 +59,7 @@ const Search = () => {
 
     const fetchSearch = async (content: string, type: string) => {
         setType(type);
+        setData([]);
 
         if (content === '') {
             setSearched(false);
@@ -71,17 +74,13 @@ const Search = () => {
         }
     };
 
-    const handleScroll = (e: any) => {
-        setScrollY(e.target.scrollTop);
-    };
-
     return (
         <main
             className="flex h-full flex-col items-center pt-10 lg:px-60 md:px-40 sm:px-2 n-scroll"
-            onScroll={handleScroll}
+            ref={scrollDivRef}
         >
             <div className="w-full">
-                <SearchHeader onSubmit={fetchSearch} scrollY={scrollY} />
+                <SearchHeader onSubmit={fetchSearch} reference={scrollDivRef} />
                 <div className="mt-20"></div>
                 {searched && data.length === 0 ? (
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -101,7 +100,7 @@ const Search = () => {
                             key="post-items"
                             posts={data as any}
                             session={session}
-                            handleUpdate={fetchSearch}
+                            handleUpdate={placeholder} // FOR NOW
                         />
                     )
                 ) : (

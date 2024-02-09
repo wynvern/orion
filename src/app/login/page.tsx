@@ -122,6 +122,7 @@ const Login = () => {
                                     classNames={{
                                         inputWrapper:
                                             'border-color rounded-3xl',
+                                        input: 'placeholder:text-neutral-600',
                                     }}
                                     onValueChange={(e) => {
                                         setEmail(e);
@@ -147,6 +148,7 @@ const Login = () => {
                                     classNames={{
                                         inputWrapper:
                                             'border-color rounded-3xl',
+                                        input: 'placeholder:text-neutral-600',
                                     }}
                                     startContent={
                                         <KeyIcon className="h-2/3 ml-4 mr-3" />

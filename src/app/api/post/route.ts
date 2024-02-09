@@ -97,6 +97,11 @@ export const GET = async (req: Request) => {
                 user: true,
                 likes: true,
                 bookmarks: true,
+                comments: {
+                    include: {
+                        user: true,
+                    },
+                },
             },
             orderBy: {
                 createdAt: 'desc',

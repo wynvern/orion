@@ -164,6 +164,7 @@ const Login = () => {
                                     classNames={{
                                         inputWrapper:
                                             'border-color rounded-3xl',
+                                        input: 'placeholder:text-neutral-600',
                                     }}
                                     startContent={
                                         <UserIcon className="h-2/3 ml-4 mr-3" />
@@ -189,6 +190,7 @@ const Login = () => {
                                     classNames={{
                                         inputWrapper:
                                             'border-color rounded-3xl',
+                                        input: 'placeholder:text-neutral-600',
                                     }}
                                     startContent={
                                         <AtSymbolIcon className="h-2/3 ml-4 mr-3" />
@@ -214,6 +216,7 @@ const Login = () => {
                                     classNames={{
                                         inputWrapper:
                                             'border-color rounded-3xl',
+                                        input: 'placeholder:text-neutral-600',
                                     }}
                                     startContent={
                                         <KeyIcon className="h-2/3 ml-4 mr-3" />
