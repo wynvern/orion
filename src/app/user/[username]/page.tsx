@@ -199,9 +199,9 @@ const UserPage = ({ params }: { params: { username: string } }) => {
 
     return (
         <main className="flex flex-col">
-            <div className="w-full lg:h-96 md:h-96 sm:h-60">
+            <div className="w-full lg:h-96 md:h-96 sm:h-60 lg:pl-6 md:pl-6 sm:pl-0">
                 <div
-                    className="w-full h-full image-edit flex items-center justify-center rounded-lg"
+                    className="w-full h-full image-edit flex items-center justify-center rounded-bl-lg rounded-br-lg"
                     style={{
                         overflow: 'hidden',
                     }}
@@ -253,8 +253,8 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                 <div className="flex items-end justify-between grow">
                     <div className="w-full lg:-translate-y-0 md:-translate-y-0 sm:-translate-y-20 z-50">
                         <div className="flex sm:flex-col md:flex-row lg:flex-row">
-                            <div className="w-40 h-40 mr-6">
-                                <div className="avatar-edit flex items-center justify-center h-full w-full relative">
+                            <div className="lg:w-60 lg:h-60 md:w-60 md:h-60 sm:w-40 sm:h-40 mr-6">
+                                <div className="avatar-edit flex items-center justify-center h-full w-full relative -translate-y-[100px]">
                                     {!isOwner ? (
                                         ''
                                     ) : (
@@ -404,6 +404,114 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                                         </Link>
                                     </div>
                                 </div>
+
+                                {/* More info about profile */}
+                                <div className="my-6">
+                                    <ul
+                                        style={{ color: '#333' }}
+                                        className="gap-y-3 grid text-nowrap"
+                                    >
+                                        {!profileData.biography ? (
+                                            ''
+                                        ) : (
+                                            <li
+                                                style={{
+                                                    maxHeight: '50px',
+                                                }}
+                                                className="flex items-center gap-x-2"
+                                            >
+                                                <div
+                                                    style={{
+                                                        height: '26px',
+                                                    }}
+                                                >
+                                                    <PencilIcon
+                                                        className="h-full"
+                                                        style={{
+                                                            padding: '2px',
+                                                        }}
+                                                    />
+                                                </div>
+                                                {profileData.biography}
+                                            </li>
+                                        )}
+                                        {!profileData.birthDate ? (
+                                            ''
+                                        ) : (
+                                            <li
+                                                style={{
+                                                    maxHeight: '50px',
+                                                }}
+                                                className="flex items-center gap-x-2"
+                                            >
+                                                <div
+                                                    style={{
+                                                        height: '26px',
+                                                    }}
+                                                >
+                                                    <CakeIcon
+                                                        className="h-full"
+                                                        style={{
+                                                            padding: '2px',
+                                                        }}
+                                                    />
+                                                </div>
+                                                {`Nasceu em ${formatTimestamp(
+                                                    profileData.birthDate
+                                                )}`}
+                                            </li>
+                                        )}
+                                        {!profileData.location ? (
+                                            ''
+                                        ) : (
+                                            <li
+                                                style={{
+                                                    maxHeight: '50px',
+                                                }}
+                                                className="flex items-center gap-x-2"
+                                            >
+                                                <div
+                                                    style={{
+                                                        height: '26px',
+                                                    }}
+                                                >
+                                                    <MapIcon className="h-full" />
+                                                </div>
+                                                {profileData.location}
+                                            </li>
+                                        )}
+                                        {profileData.createdAt ? (
+                                            <li
+                                                style={{
+                                                    maxHeight: '50px',
+                                                }}
+                                                className="flex items-center gap-x-2"
+                                            >
+                                                <div
+                                                    style={{
+                                                        height: '26px',
+                                                    }}
+                                                >
+                                                    <CalendarIcon className="h-full" />
+                                                </div>
+                                                {`Entrou em ${formatTimestamp(
+                                                    profileData.createdAt
+                                                )}`}
+                                            </li>
+                                        ) : (
+                                            <span className="pulsating-span">
+                                                Entrou em 20 de 20 de 2000
+                                            </span>
+                                        )}
+                                        {profileData.createdAt ? (
+                                            ''
+                                        ) : (
+                                            <span className="pulsating-span">
+                                                Entrou em 20 de 20 de 2000
+                                            </span>
+                                        )}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -439,44 +547,49 @@ const UserPage = ({ params }: { params: { username: string } }) => {
                 </div>
             </div>
 
-            <div className="w-full flex justify-center pb-4">
-                <div className="flex">
-                    <Button
-                        variant="bordered"
-                        onClick={() => setSelectedPosts('posted')}
-                        color={
-                            selectedPosts === 'posted' ? 'secondary' : 'default'
+            <div className="flex justify-center my-6">
+                <Tabs
+                    variant="bordered"
+                    selectedKey={selectedPosts}
+                    onSelectionChange={(key) => setSelectedPosts(key as string)}
+                    size="lg"
+                    classNames={{
+                        tabList: 'rounded-3xl border-none h-14',
+                        base: 'h-14',
+                    }}
+                    radius="full"
+                >
+                    <Tab
+                        key="posted"
+                        className="p-4 h-14"
+                        title={
+                            <div className="flex items-center gap-x-2">
+                                <b>Postado</b>
+                                <CubeIcon className="h-4 w-4" />
+                            </div>
                         }
-                        className="border-none h-14"
-                    >
-                        Posts
-                        <CubeIcon className="h-1/2" />
-                    </Button>
-                    <Button
-                        variant="bordered"
-                        onClick={() => setSelectedPosts('bookmarked')}
-                        color={
-                            selectedPosts === 'bookmarked'
-                                ? 'secondary'
-                                : 'default'
+                    ></Tab>
+                    <Tab
+                        key="bookmarked"
+                        className="p-4 h-14"
+                        title={
+                            <div className="flex items-center gap-x-2">
+                                <b>Likes</b>
+                                <HeartIcon className="h-4 w-4" />
+                            </div>
                         }
-                        className="border-none h-14"
-                    >
-                        Bookmarks
-                        <BookmarkIcon className="h-1/2" />
-                    </Button>
-                    <Button
-                        variant="bordered"
-                        onClick={() => setSelectedPosts('liked')}
-                        color={
-                            selectedPosts === 'liked' ? 'secondary' : 'default'
+                    ></Tab>
+                    <Tab
+                        key="liked"
+                        className="p-4 h-14"
+                        title={
+                            <div className="flex items-center gap-x-2">
+                                <b>Bookmarks</b>
+                                <BookmarkIcon className="h-4 w-4" />
+                            </div>
                         }
-                        className="border-none h-14"
-                    >
-                        Likes
-                        <HeartIcon className="h-1/2" />
-                    </Button>
-                </div>
+                    ></Tab>
+                </Tabs>
             </div>
 
             {profileData.id ? (

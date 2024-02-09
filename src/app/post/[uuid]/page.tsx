@@ -130,14 +130,31 @@ const Post = ({ params }: { params: { uuid: string } }) => {
     };
 
     return (
-        <main className="flex flex-col h-screen w-full overflow-hidden">
-            <div className="w-full h-full flex flex-row">
-                <div className="w-2/3 h-full flex justify-center items-center relative">
+        <main className="flex flex-col min-h-screen w-full overflow-hidden">
+            <div
+                className="absolute mt-6 ml-6"
+                style={{ zIndex: imageMoveCord.scale > 1 ? '1' : '200' }}
+            >
+                <Button
+                    isIconOnly={true}
+                    onClick={() => router.back()}
+                    color="secondary"
+                    variant="bordered"
+                    className="border-none"
+                >
+                    <ChevronLeftIcon className="h-2/3" />
+                </Button>
+            </div>
+            <div className="w-full min-h-screen flex lg:flex-row md:flex-row sm:flex-col">
+                <div className="lg:w-2/3 md:w-2/3 sm:w-full lg:min-h-screen md:min-h-screen flex justify-center items-center relative lg:mt-0 md:mt-0 sm:mt-20 h-96">
                     {post ? (
                         <div
                             className={`absolute left-10 ${
                                 post?.images <= 1 ? 'hidden' : 'visible'
                             }`}
+                            style={{
+                                zIndex: imageMoveCord.scale > 1 ? '1' : '200',
+                            }}
                         >
                             <Button
                                 isIconOnly={true}
@@ -161,12 +178,11 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                     <div className="w-2/3 flex items-center justify-center">
                         <Image
                             src={`/api/image/post/${params.uuid}/${currentImageIndex}`}
-                            className={`w-full rounded-none`}
+                            className={`w-full rounded-none sm:max-h-[300px] md:max-h-[600px] lg:max-h-[600px]`}
                             onMouseDownCapture={eventHandle}
                             onMouseLeave={mouseLeaveImage}
                             style={{
                                 transform: `translate(${imageMoveCord.x}px, ${imageMoveCord.y}px) scale(${imageMoveCord.scale})`,
-                                maxHeight: '60vh',
                                 zIndex: '120',
                             }}
                         ></Image>
@@ -176,6 +192,9 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                             className={`absolute right-10 ${
                                 post?.images <= 1 ? 'hidden' : 'visible'
                             }`}
+                            style={{
+                                zIndex: imageMoveCord.scale > 1 ? '1' : '200',
+                            }}
                         >
                             <Button
                                 isIconOnly={true}
@@ -190,7 +209,12 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                     ) : (
                         ''
                     )}
-                    <div className="absolute bottom-20">
+                    <div
+                        className="absolute lg:bottom-20 md:bottom-20 sm:bottom-0"
+                        style={{
+                            zIndex: imageMoveCord.scale > 1 ? '1' : '200',
+                        }}
+                    >
                         {post ? (
                             <ImageIndicator
                                 images={post.images}
@@ -204,211 +228,248 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                         )}
                     </div>
                 </div>
-                <div className="w-1/2 h-full border-ll flex justify-between flex-col p-6">
-                    <div className="mt-10 grow flex flex-col">
-                        <div>
-                            {post !== undefined ? (
-                                <div className="flex w-full">
-                                    <Link
-                                        href={`/user/${post.user.username}`}
-                                        className="flex items-start"
-                                    >
-                                        <div className="lg:h-16 lg:w-16 md:h-16 md:w-16 sm:h-12 sm:w-12">
-                                            <Image
-                                                src={`/api/image/avatar/${post.user.id}`}
-                                                alt="user profile"
-                                                className="border-d z-0"
-                                                removeWrapper={true}
-                                                style={{
-                                                    height: '100%',
-                                                    width: '100%',
-                                                }}
-                                            />
-                                        </div>
-                                    </Link>
-                                    <div className="pl-6 grow w-1">
-                                        <div className="flex items-center gap-x-2 mb-2">
-                                            <b>
-                                                <Link
-                                                    href={`/user/${post.user.username}`}
-                                                    color="secondary"
-                                                >
-                                                    {post.user.username}
-                                                </Link>
-                                            </b>
-                                            <p>•</p>
-                                            <p className="text-sm">
-                                                {formatTimestamp(
-                                                    post.createdAt
-                                                )}
+                <ScrollShadow className="lg:w-1/2  md:w-1/2  sm:w-full min-h-screen">
+                    <div className="w-full h-full flex justify-between flex-col p-6">
+                        <div className="mt-10 grow flex flex-col">
+                            <div>
+                                {post !== undefined ? (
+                                    <div className="flex w-full">
+                                        <Link
+                                            href={`/user/${post.user.username}`}
+                                            className="flex items-start"
+                                        >
+                                            <div className="lg:h-16 lg:w-16 md:h-16 md:w-16 sm:h-12 sm:w-12">
+                                                <Image
+                                                    src={`/api/image/avatar/${post.user.id}`}
+                                                    alt="user profile"
+                                                    className="border-d z-0"
+                                                    removeWrapper={true}
+                                                    style={{
+                                                        height: '100%',
+                                                        width: '100%',
+                                                    }}
+                                                />
+                                            </div>
+                                        </Link>
+                                        <div className="pl-6 grow w-1">
+                                            <div className="flex items-center gap-x-2 mb-2">
+                                                <b>
+                                                    <Link
+                                                        href={`/user/${post.user.username}`}
+                                                        color="secondary"
+                                                    >
+                                                        {post.user.username}
+                                                    </Link>
+                                                </b>
+                                                <p>•</p>
+                                                <p className="text-sm">
+                                                    {formatTimestamp(
+                                                        post.createdAt
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <p className="break-all">
+                                                {post.content}
                                             </p>
                                         </div>
-                                        <p className="break-all">
-                                            {post.content}
-                                        </p>
-                                    </div>
-                                </div>
-                            ) : (
-                                ''
-                            )}
-                            <div className="my-8">
-                                {post !== undefined ? (
-                                    <div className="flex flex-row justify-between">
-                                        <LikePost post={post} />
-                                        <BookmarkPost post={post} />
-                                        <Dropdown
-                                            classNames={{
-                                                content:
-                                                    'background-bg border-d',
-                                            }}
-                                        >
-                                            <DropdownTrigger>
-                                                <Button
-                                                    variant="bordered"
-                                                    color="secondary"
-                                                    style={{
-                                                        padding: '8px',
-                                                        border: 'none',
-                                                    }}
-                                                    isIconOnly={true}
-                                                >
-                                                    <EllipsisHorizontalIcon />
-                                                </Button>
-                                            </DropdownTrigger>
-                                            <DropdownMenu
-                                                variant="faded"
-                                                aria-label="Dropdown menu with description"
-                                            >
-                                                {session?.user.id ===
-                                                post.user.id ? (
-                                                    <DropdownItem
-                                                        key="edit"
-                                                        description="Edite este post"
-                                                        className="border-radius-sys"
-                                                        startContent={
-                                                            <PencilIcon
-                                                                scale={0.1}
-                                                                className="w-14"
-                                                                style={{
-                                                                    padding:
-                                                                        '10px',
-                                                                }}
-                                                            />
-                                                        }
-                                                    >
-                                                        Editar
-                                                    </DropdownItem>
-                                                ) : (
-                                                    <DropdownItem className="hidden">
-                                                        asd
-                                                    </DropdownItem>
-                                                )}
-                                                <DropdownItem
-                                                    key="share"
-                                                    description="Compartilhar post"
-                                                    className="border-radius-sys"
-                                                    onClick={() => {
-                                                        const copyContent =
-                                                            async () => {
-                                                                try {
-                                                                    await navigator.clipboard.writeText(
-                                                                        `http://localhost:3000/post/${post.id}`
-                                                                    );
-                                                                    toast(
-                                                                        'Copiado para área de transferência.',
-                                                                        {
-                                                                            position:
-                                                                                'bottom-right',
-                                                                            autoClose: 3000,
-                                                                            hideProgressBar:
-                                                                                false,
-                                                                            closeOnClick:
-                                                                                true,
-                                                                            pauseOnHover:
-                                                                                true,
-                                                                            draggable:
-                                                                                true,
-                                                                            progress:
-                                                                                undefined,
-                                                                            theme: 'dark',
-                                                                            icon: (
-                                                                                <ShareIcon />
-                                                                            ),
-                                                                            transition:
-                                                                                Slide,
-                                                                        }
-                                                                    );
-                                                                } catch (err) {
-                                                                    console.error(
-                                                                        'Failed to copy: ',
-                                                                        err
-                                                                    );
-                                                                }
-                                                            };
-
-                                                        copyContent();
-                                                    }}
-                                                    startContent={
-                                                        <ShareIcon
-                                                            scale={0.1}
-                                                            className="w-14"
-                                                            style={{
-                                                                padding: '10px',
-                                                            }}
-                                                        />
-                                                    }
-                                                >
-                                                    Compartilhar
-                                                </DropdownItem>
-                                                {session?.user.id ===
-                                                post.user.id ? (
-                                                    <DropdownItem
-                                                        key="delete"
-                                                        onClick={() => {
-                                                            setDeletePostUuid(
-                                                                post.id
-                                                            );
-                                                            setDeletePostVisible(
-                                                                true
-                                                            );
-                                                        }}
-                                                        description="Delete este post"
-                                                        className="border-radius-sys text-danger"
-                                                        startContent={
-                                                            <TrashIcon
-                                                                scale={0.1}
-                                                                className="w-14"
-                                                                style={{
-                                                                    padding:
-                                                                        '10px',
-                                                                }}
-                                                            />
-                                                        }
-                                                    >
-                                                        Excluír
-                                                    </DropdownItem>
-                                                ) : (
-                                                    <DropdownItem className="hidden">
-                                                        asd
-                                                    </DropdownItem>
-                                                )}
-                                            </DropdownMenu>
-                                        </Dropdown>
                                     </div>
                                 ) : (
                                     ''
                                 )}
+                                <div>
+                                    <div className="flex items-center mt-8 mx-4">
+                                        <Input
+                                            size="sm"
+                                            type="text"
+                                            placeholder="Digite algo..."
+                                            variant="bordered"
+                                            onValueChange={(e) => {
+                                                setCommentContent(e);
+                                            }}
+                                            value={commentContent}
+                                            startContent={
+                                                <ChatBubbleBottomCenterIcon className="h-2/3 mr-3" />
+                                            }
+                                            classNames={{
+                                                inputWrapper:
+                                                    'border-none rounded-3xl p-0',
+                                                input: 'placeholder:text-neutral-600',
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    createComment();
+                                                }
+                                            }}
+                                        />
+                                        <Button
+                                            isIconOnly={true}
+                                            onClick={createComment}
+                                            color="secondary"
+                                            variant="bordered"
+                                            className="border-none"
+                                        >
+                                            <PaperAirplaneIcon className="h-1/2" />
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="my-8">
+                                    {post !== undefined ? (
+                                        <div className="flex flex-row justify-between mx-4">
+                                            <LikePost post={post} />
+                                            <BookmarkPost post={post} />
+                                            <Dropdown
+                                                classNames={{
+                                                    content:
+                                                        'background-bg border-d',
+                                                }}
+                                            >
+                                                <DropdownTrigger>
+                                                    <Button
+                                                        variant="bordered"
+                                                        color="secondary"
+                                                        style={{
+                                                            padding: '8px',
+                                                            border: 'none',
+                                                        }}
+                                                        isIconOnly={true}
+                                                    >
+                                                        <EllipsisHorizontalIcon />
+                                                    </Button>
+                                                </DropdownTrigger>
+                                                <DropdownMenu
+                                                    variant="faded"
+                                                    aria-label="Dropdown menu with description"
+                                                >
+                                                    {session?.user.id ===
+                                                    post.user.id ? (
+                                                        <DropdownItem
+                                                            key="edit"
+                                                            description="Edite este post"
+                                                            className="border-radius-sys"
+                                                            startContent={
+                                                                <PencilIcon
+                                                                    scale={0.1}
+                                                                    className="w-14"
+                                                                    style={{
+                                                                        padding:
+                                                                            '10px',
+                                                                    }}
+                                                                />
+                                                            }
+                                                        >
+                                                            Editar
+                                                        </DropdownItem>
+                                                    ) : (
+                                                        <DropdownItem className="hidden">
+                                                            asd
+                                                        </DropdownItem>
+                                                    )}
+                                                    <DropdownItem
+                                                        key="share"
+                                                        description="Compartilhar post"
+                                                        className="border-radius-sys"
+                                                        onClick={() => {
+                                                            const copyContent =
+                                                                async () => {
+                                                                    try {
+                                                                        await navigator.clipboard.writeText(
+                                                                            `http://localhost:3000/post/${post.id}`
+                                                                        );
+                                                                        toast(
+                                                                            'Copiado para área de transferência.',
+                                                                            {
+                                                                                position:
+                                                                                    'bottom-right',
+                                                                                autoClose: 3000,
+                                                                                hideProgressBar:
+                                                                                    false,
+                                                                                closeOnClick:
+                                                                                    true,
+                                                                                pauseOnHover:
+                                                                                    true,
+                                                                                draggable:
+                                                                                    true,
+                                                                                progress:
+                                                                                    undefined,
+                                                                                theme: 'dark',
+                                                                                icon: (
+                                                                                    <ShareIcon />
+                                                                                ),
+                                                                                transition:
+                                                                                    Slide,
+                                                                            }
+                                                                        );
+                                                                    } catch (err) {
+                                                                        console.error(
+                                                                            'Failed to copy: ',
+                                                                            err
+                                                                        );
+                                                                    }
+                                                                };
+
+                                                            copyContent();
+                                                        }}
+                                                        startContent={
+                                                            <ShareIcon
+                                                                scale={0.1}
+                                                                className="w-14"
+                                                                style={{
+                                                                    padding:
+                                                                        '10px',
+                                                                }}
+                                                            />
+                                                        }
+                                                    >
+                                                        Compartilhar
+                                                    </DropdownItem>
+                                                    {session?.user.id ===
+                                                    post.user.id ? (
+                                                        <DropdownItem
+                                                            key="delete"
+                                                            onClick={() => {
+                                                                setDeletePostUuid(
+                                                                    post.id
+                                                                );
+                                                                setDeletePostVisible(
+                                                                    true
+                                                                );
+                                                            }}
+                                                            description="Delete este post"
+                                                            className="border-radius-sys text-danger"
+                                                            startContent={
+                                                                <TrashIcon
+                                                                    scale={0.1}
+                                                                    className="w-14"
+                                                                    style={{
+                                                                        padding:
+                                                                            '10px',
+                                                                    }}
+                                                                />
+                                                            }
+                                                        >
+                                                            Excluír
+                                                        </DropdownItem>
+                                                    ) : (
+                                                        <DropdownItem className="hidden">
+                                                            asd
+                                                        </DropdownItem>
+                                                    )}
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        </div>
+                                    ) : (
+                                        ''
+                                    )}
+                                </div>
+                                <div className="mb-6">
+                                    <b>
+                                        <p>Comentários</p>
+                                    </b>
+                                </div>
                             </div>
-                            <div className="mb-6">
-                                <b>
-                                    <p>Comentários</p>
-                                </b>
-                            </div>
-                        </div>
-                        <div className="flex justify-between flex-col grow">
-                            <div className="flex grow overflow-auto">
-                                <ScrollShadow className="w-full">
-                                    <div className="h-20 w-full">
+                            <div className="flex justify-between flex-col">
+                                <div className="flex">
+                                    <div className="md:h-20 lg:h-20 w-full">
                                         {post?.comments ? (
                                             <PostComments
                                                 comments={post.comments}
@@ -418,46 +479,11 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                                             ''
                                         )}
                                     </div>
-                                </ScrollShadow>
-                            </div>
-                            <div className="flex items-center mt-8">
-                                <Input
-                                    size="sm"
-                                    type="text"
-                                    placeholder="Digite algo..."
-                                    variant="bordered"
-                                    onValueChange={(e) => {
-                                        setCommentContent(e);
-                                    }}
-                                    value={commentContent}
-                                    startContent={
-                                        <ChatBubbleBottomCenterIcon className="h-2/3 mr-3 ml-4" />
-                                    }
-                                    classNames={{
-                                        inputWrapper:
-                                            'border-none rounded-3xl p-0',
-                                        input: 'placeholder:text-neutral-600',
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            createComment();
-                                        }
-                                    }}
-                                />
-                                <Button
-                                    isIconOnly={true}
-                                    onClick={createComment}
-                                    color="secondary"
-                                    variant="bordered"
-                                    className="border-none"
-                                >
-                                    <PaperAirplaneIcon className="h-1/2" />
-                                </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div></div>
-                </div>
+                </ScrollShadow>
             </div>
 
             <DeletePost

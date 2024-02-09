@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 import formatTimestamp from '@/utils/formatTimesTamp';
 import {
     BookmarkIcon,
+    ChatBubbleBottomCenterIcon,
     ChatBubbleOvalLeftIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -173,7 +174,7 @@ const PostItems: React.FC<PostItemsProps> = ({
                             </Link>
                         </div>
                     </div>
-                    <div className="flex grow overflow-auto flex-col items-center mb-6">
+                    <div className="flex grow overflow-auto flex-col items-center mb-6 lg:visible md:visible sm:hidden">
                         <div className="my-6 w-full">
                             <b>
                                 <p>Comentários</p>
@@ -191,16 +192,17 @@ const PostItems: React.FC<PostItemsProps> = ({
                                 )}
                             </div>
                         </ScrollShadow>
-                        <div className="mb-6">
+                        <div>
                             <Link href={`/post/${post.id}`} color="secondary">
                                 <b>Veja mais</b>
                             </Link>
                         </div>
                     </div>
-                    <div className="flex flex-row justify-around">
+                    <div className="flex flex-row justify-around mt-6">
                         <LikePost post={post} />
                         <Button
                             isIconOnly={true}
+                            onClick={() => router.push(`/post/${post.id}`)}
                             variant="bordered"
                             color="secondary"
                             style={{
@@ -208,7 +210,7 @@ const PostItems: React.FC<PostItemsProps> = ({
                                 border: 'none',
                             }}
                         >
-                            <ChatBubbleOvalLeftIcon />
+                            <ChatBubbleBottomCenterIcon />
                         </Button>
                         <BookmarkPost post={post} />
                         <Dropdown

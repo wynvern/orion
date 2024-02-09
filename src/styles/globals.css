@@ -85,6 +85,13 @@ input:-webkit-autofill:active {
     border-bottom: 1px solid var(--border);
 }
 
+.border-bb {
+    border-top-left-radius: var(--border-r);
+    border-top-right-radius: var(--border-r);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
 .border-r {
     border-right: 1px solid var(--border);
 }
@@ -212,4 +219,5 @@ input:-webkit-autofill:active {
 
 .bg-online {
     background-color: rgb(87, 224, 59);
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.445);
 }

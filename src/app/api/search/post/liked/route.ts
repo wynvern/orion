@@ -46,6 +46,9 @@ export const GET = async (req: Request) => {
                 likes: true,
                 user: true,
             },
+            orderBy: {
+                createdAt: 'desc',
+            },
         });
 
         if (!fetchedPosts) {

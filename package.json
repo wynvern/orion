@@ -7,7 +7,8 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "server": "node server/socket.js"
+        "server-socket": "node server/socket.js",
+        "server-image": "nodemon server/image-api/index.js"
     },
     "dependencies": {
         "@heroicons/react": "^2.1.1",
@@ -15,10 +16,12 @@
         "@nextui-org/react": "^2.2.9",
         "@prisma/client": "^5.8.1",
         "bcrypt": "^5.1.1",
+        "express": "^4.18.2",
         "framer-motion": "^11.0.2",
         "next": "14.1.0",
         "next-auth": "^4.24.5",
         "nodemailer": "^6.9.9",
+        "nodemon": "^3.0.3",
         "prisma": "^5.8.1",
         "react": "^18",
         "react-dom": "^18",

@@ -33,9 +33,10 @@ const Header: React.FC<HeaderProps> = ({ reference }) => {
 
     return (
         <div
-            className={`absolute top-0 right-0 z-50 w-full transition-all duration-300 p-6 ${
+            className={`absolute top-0 right-0 w-full transition-all duration-300 p-6 ${
                 visible ? 'translate-y-0' : '-translate-y-40'
             }`}
+            style={{ zIndex: '120' }}
         >
             <div className="p-4 background-bg border-radius-sys">
                 <div className="flex items-center justify-between h-12">

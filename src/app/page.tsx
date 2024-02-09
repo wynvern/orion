@@ -7,6 +7,7 @@ import PostItems from '@/components/Post/PostItems';
 import { PlusIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import { Button } from '@nextui-org/react';
 import { Session } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { getSession } from 'next-auth/react';
 import React, { useRef } from 'react';
 import { useEffect, useState } from 'react';
@@ -44,6 +45,12 @@ const Home = () => {
     useEffect(() => {
         const executeLoad = async () => {
             const fetchSession = await getSession();
+
+            const cookieValue = document.cookie
+                .split('; ')
+                .find((cookie) => cookie.startsWith('token'))
+                ?.split('=')[1];
+            console.log();
 
             setSession(fetchSession);
             fetchPosts();

@@ -98,14 +98,13 @@ const LikePost: React.FC<LikePostProps> = ({ post }) => {
             variant="bordered"
             color={liked ? 'danger' : 'secondary'}
             onClick={handleLike}
-            style={{
-                border: 'none',
-            }}
+            isIconOnly={true}
+            style={{ border: 'none' }}
             startContent={
                 liked ? (
-                    <HeartIconFilled className="h-2/3" />
+                    <HeartIconFilled className="h-2/3 mr-2" />
                 ) : (
-                    <HeartIcon className="h-2/3" />
+                    <HeartIcon className="h-2/3 mr-2" />
                 )
             }
         >

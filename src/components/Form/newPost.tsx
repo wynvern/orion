@@ -141,7 +141,9 @@ const CreatePost: React.FC<NewPostProps> = ({
                                 }}
                             />
                             <div>
-                                <p>{wordCounter}/200</p>
+                                <p className="text-neutral-600">
+                                    {wordCounter}/200
+                                </p>
                             </div>
 
                             <div

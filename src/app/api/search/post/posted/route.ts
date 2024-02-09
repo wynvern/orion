@@ -42,6 +42,9 @@ export const GET = async (req: Request) => {
                 bookmarks: true,
                 user: true,
             },
+            orderBy: {
+                createdAt: 'desc',
+            },
         });
 
         if (!fetchedPosts) {

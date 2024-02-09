@@ -98,14 +98,13 @@ const BookmarkPost: React.FC<BookmarkPostProps> = ({ post }) => {
             variant="bordered"
             color="secondary"
             onClick={handleBookmark}
-            style={{
-                border: 'none',
-            }}
+            isIconOnly={true}
+            style={{ border: 'none' }}
             startContent={
                 bookmarked ? (
-                    <BookmarkIconFilled className="h-2/3" />
+                    <BookmarkIconFilled className="h-2/3 mr-2" />
                 ) : (
-                    <BookmarkIcon className="h-2/3" />
+                    <BookmarkIcon className="h-2/3 mr-2" />
                 )
             }
         >
