@@ -71,6 +71,7 @@ model Post {
     user      User            @relation(fields: [userId], references: [id])
     comments  Comment[]
     images    Int             @default(0)
+    videos    Int             @default(0)
     likes     PostLikes[]
     bookmarks PostBookmarks[]
 }

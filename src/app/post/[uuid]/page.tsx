@@ -111,21 +111,23 @@ const Post = ({ params }: { params: { uuid: string } }) => {
     });
     const [imageClicked, setImageClicked] = useState(false);
 
-    const [currentImageIndex, setCurrentImageIndex] = useState(1);
+    const [currentMediaIndex, setCurrentMediaIndex] = useState(1);
 
-    const nextImage = () => {
-        if (post && post.images > 1) {
-            setCurrentImageIndex(
-                (prevIndex: number) => (prevIndex % post.images) + 1
-            );
+    const nextMedia = () => {
+        if (post && post.images + post.videos > 1) {
+            setCurrentMediaIndex((prevIndex: number) => {
+                const totalMedia = post.images + post.videos;
+                return (prevIndex % totalMedia) + 1;
+            });
         }
     };
 
-    const previousImage = () => {
-        if (post && post.images > 1) {
-            setCurrentImageIndex((prevIndex: number) =>
-                prevIndex === 1 ? post.images : prevIndex - 1
-            );
+    const previousMedia = () => {
+        if (post && post.images + post.videos > 1) {
+            setCurrentMediaIndex((prevIndex: number) => {
+                const totalMedia = post.images + post.videos;
+                return prevIndex === 1 ? totalMedia : prevIndex - 1;
+            });
         }
     };
 
@@ -150,7 +152,9 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                     {post ? (
                         <div
                             className={`absolute left-10 ${
-                                post?.images <= 1 ? 'hidden' : 'visible'
+                                post?.images + post.videos <= 1
+                                    ? 'hidden'
+                                    : 'visible'
                             }`}
                             style={{
                                 zIndex: imageMoveCord.scale > 1 ? '1' : '200',
@@ -158,7 +162,7 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                         >
                             <Button
                                 isIconOnly={true}
-                                onClick={previousImage}
+                                onClick={previousMedia}
                                 color="secondary"
                                 variant="bordered"
                                 className="border-none"
@@ -175,22 +179,38 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                         }`}
                         style={{ zIndex: '110', opacity: '50%' }}
                     ></div>
-                    <div className="w-2/3 flex items-center justify-center">
-                        <Image
-                            src={`/api/image/post/${params.uuid}/${currentImageIndex}`}
-                            className={`w-full rounded-none sm:max-h-[300px] md:max-h-[600px] lg:max-h-[600px]`}
-                            onMouseDownCapture={eventHandle}
-                            onMouseLeave={mouseLeaveImage}
-                            style={{
-                                transform: `translate(${imageMoveCord.x}px, ${imageMoveCord.y}px) scale(${imageMoveCord.scale})`,
-                                zIndex: '120',
-                            }}
-                        ></Image>
-                    </div>
+                    {post ? (
+                        <div className="w-2/3 flex items-center justify-center">
+                            {currentMediaIndex > post.images && post.videos ? (
+                                <video controls>
+                                    <source
+                                        src={`/api/video/post/${post.id}/${
+                                            currentMediaIndex - post.images
+                                        }`}
+                                    />
+                                </video>
+                            ) : (
+                                <Image
+                                    src={`/api/image/post/${params.uuid}/${currentMediaIndex}`}
+                                    className={`w-full rounded-none sm:max-h-[300px] md:max-h-[600px] lg:max-h-[600px]`}
+                                    onMouseDownCapture={eventHandle}
+                                    onMouseLeave={mouseLeaveImage}
+                                    style={{
+                                        transform: `translate(${imageMoveCord.x}px, ${imageMoveCord.y}px) scale(${imageMoveCord.scale})`,
+                                        zIndex: '120',
+                                    }}
+                                ></Image>
+                            )}
+                        </div>
+                    ) : (
+                        ''
+                    )}
                     {post ? (
                         <div
                             className={`absolute right-10 ${
-                                post?.images <= 1 ? 'hidden' : 'visible'
+                                post?.images + post.videos <= 1
+                                    ? 'hidden'
+                                    : 'visible'
                             }`}
                             style={{
                                 zIndex: imageMoveCord.scale > 1 ? '1' : '200',
@@ -198,7 +218,7 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                         >
                             <Button
                                 isIconOnly={true}
-                                onClick={nextImage}
+                                onClick={nextMedia}
                                 color="secondary"
                                 variant="bordered"
                                 className="border-none"
@@ -215,12 +235,12 @@ const Post = ({ params }: { params: { uuid: string } }) => {
                             zIndex: imageMoveCord.scale > 1 ? '1' : '200',
                         }}
                     >
-                        {post ? (
+                        {post && post.images + post.videos >= 2 ? (
                             <ImageIndicator
-                                images={post.images}
-                                currentImageIndex={currentImageIndex}
+                                images={post.images + post.videos}
+                                currentImageIndex={currentMediaIndex}
                                 handleIndexChange={(index: number) => {
-                                    setCurrentImageIndex(index);
+                                    setCurrentMediaIndex(index);
                                 }}
                             />
                         ) : (

@@ -7,8 +7,7 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "server-socket": "node server/socket.js",
-        "server-image": "nodemon server/image-api/index.js"
+        "server-socket": "node server/socket.js"
     },
     "dependencies": {
         "@heroicons/react": "^2.1.1",
@@ -26,6 +25,7 @@
         "react": "^18",
         "react-dom": "^18",
         "react-image-crop": "^11.0.5",
+        "react-markdown": "^9.0.1",
         "react-toastify": "^10.0.4",
         "sharp": "^0.33.2",
         "socket.io": "^4.7.4",

@@ -31,6 +31,8 @@ import BookmarkPost from './BookmarkPost';
 import ImageIndicator from './ImageIndicator';
 import { useRouter } from 'next/navigation';
 import PostComments from './PostComments';
+import Markdown from 'react-markdown';
+import Video from '../videoPlayer/Video';
 
 interface PostItemsProps {
     posts: Post[];
@@ -63,79 +65,109 @@ const PostItems: React.FC<PostItemsProps> = ({
                 key={post.id}
                 className="border-d flex sm:flex-col md:flex-col lg:flex-row w-full mb-10 sm:mb-6 md:mb-10 lg:mb-20 overflow-hidden"
             >
-                <div
-                    className="post-image-top sm:post-image-top md:post-image-top lg:post-image-left sm:w-full md:w-full lg:w-1/2 relative flex justify-center items-center"
-                    style={{
-                        objectFit: 'cover',
-                        aspectRatio: '1 / 1',
-                    }}
-                >
+                {post.images + post.videos >= 1 ? (
                     <div
-                        className={`absolute left-8 z-50 ${
-                            post?.images <= 1 ? 'hidden' : 'visible'
-                        }`}
+                        className="post-image-top sm:post-image-top md:post-image-top lg:post-image-left sm:w-full md:w-full lg:w-1/2 relative flex justify-center items-center"
+                        style={{
+                            objectFit: 'cover',
+                            aspectRatio: '1 / 1',
+                        }}
                     >
-                        <Button
-                            isIconOnly={true}
-                            onClick={() => {
-                                handleImageIndexChange(
-                                    imageIndices[index] - 1,
-                                    index
-                                );
-                            }}
-                            color="secondary"
-                            variant="bordered"
-                            className="border-none"
+                        <div
+                            className={`absolute left-8 z-50 ${
+                                post?.images + post.videos <= 1
+                                    ? 'hidden'
+                                    : 'visible'
+                            }`}
                         >
-                            <ChevronLeftIcon className="h-2/3" />
-                        </Button>
-                    </div>
-                    <div
-                        className="h-full w-full relative rounded-none"
-                        onDoubleClick={() => router.push(`/post/${post.id}`)}
-                    >
-                        <Image
-                            src={`/api/image/post/${post.id}/${imageIndices[index]}`}
-                            alt="Post Image"
-                            removeWrapper={true}
+                            <Button
+                                isIconOnly={true}
+                                onClick={() => {
+                                    handleImageIndexChange(
+                                        imageIndices[index] - 1,
+                                        index
+                                    );
+                                }}
+                                color="secondary"
+                                variant="bordered"
+                                className="border-none"
+                            >
+                                <ChevronLeftIcon className="h-2/3" />
+                            </Button>
+                        </div>
+                        <div
                             className="h-full w-full relative rounded-none"
-                            style={{
-                                objectFit: 'cover',
-                                aspectRatio: '1 / 1',
-                            }}
-                        />
-                    </div>
-                    <div
-                        className={`absolute right-8 z-50 ${
-                            post?.images <= 1 ? 'hidden' : 'visible'
-                        }`}
-                    >
-                        <Button
-                            isIconOnly={true}
-                            onClick={() => {
-                                handleImageIndexChange(
-                                    imageIndices[index] + 1,
-                                    index
-                                );
-                            }}
-                            color="secondary"
-                            variant="bordered"
-                            className="border-none"
-                        >
-                            <ChevronRightIcon className="h-2/3" />
-                        </Button>
-                    </div>
-                    <div className="absolute bottom-10 z-50">
-                        <ImageIndicator
-                            images={post.images}
-                            currentImageIndex={imageIndices[index]}
-                            handleIndexChange={(newIndex: number) =>
-                                handleImageIndexChange(newIndex, index)
+                            onDoubleClick={() =>
+                                router.push(`/post/${post.id}`)
                             }
-                        />
+                        >
+                            {imageIndices[index] > post.images &&
+                            post.videos ? (
+                                <Video
+                                    src={`/api/video/post/${post.id}/${
+                                        imageIndices[index] - post.images
+                                    }`}
+                                    className="h-full w-full relative rounded-none"
+                                    style={{
+                                        objectFit: 'cover',
+                                        aspectRatio: '1 / 1',
+                                    }}
+                                />
+                            ) : (
+                                <Image
+                                    src={`/api/image/post/${post.id}/${imageIndices[index]}`}
+                                    alt="Post Image"
+                                    removeWrapper={true}
+                                    className="h-full w-full relative rounded-none"
+                                    style={{
+                                        objectFit: 'cover',
+                                        aspectRatio: '1 / 1',
+                                    }}
+                                />
+                            )}
+                        </div>
+                        <div
+                            className={`absolute right-8 z-50 ${
+                                post?.images <= 1 ? 'hidden' : 'visible'
+                            }`}
+                        >
+                            <Button
+                                isIconOnly={true}
+                                onClick={() => {
+                                    handleImageIndexChange(
+                                        imageIndices[index] + 1,
+                                        index
+                                    );
+                                }}
+                                color="secondary"
+                                variant="bordered"
+                                className="border-none"
+                            >
+                                <ChevronRightIcon className="h-2/3" />
+                            </Button>
+                        </div>
+                        {post.images >= 2 ? (
+                            <div className="absolute bottom-10 z-50">
+                                <ImageIndicator
+                                    images={post.images}
+                                    currentImageIndex={imageIndices[index]}
+                                    handleIndexChange={(newIndex: number) =>
+                                        handleImageIndexChange(newIndex, index)
+                                    }
+                                />
+                            </div>
+                        ) : (
+                            ''
+                        )}
                     </div>
-                </div>
-                <div className="lg:p-6 md:p-6 sm:p-4 sm:pt-6 sm:w-full md:w-full lg:w-1/2 flex sm:block md:block lg:flex justify-between flex-col">
+                ) : (
+                    ''
+                )}
+                <div
+                    className={`lg:p-6 md:p-6 sm:p-4 sm:pt-6 sm:w-full md:w-full lg:${
+                        post.images >= 1 ? 'w-1/2' : 'w-full'
+                    } flex sm:block md:block lg:flex justify-between flex-col`}
+                >
                     <div className="flex w-full">
                         <Link
                             href={`/user/${post.user.username}`}
@@ -170,7 +202,9 @@ const PostItems: React.FC<PostItemsProps> = ({
                                 </p>
                             </div>
                             <Link href={`/post/${post.id}`} color="secondary">
-                                <p className="break-all">{post.content}</p>
+                                <Markdown className="break-all leading-relaxed">
+                                    {post.content}
+                                </Markdown>
                             </Link>
                         </div>
                     </div>

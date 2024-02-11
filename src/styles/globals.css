@@ -204,7 +204,6 @@ input:-webkit-autofill:active {
 }
 
 .post-image-top {
-    border-bottom: 1px solid var(--border) !important;
     border-radius: var(--border-r) var(--border-r) 0px 0px;
 }
 

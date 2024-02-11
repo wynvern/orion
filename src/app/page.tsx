@@ -46,12 +46,6 @@ const Home = () => {
         const executeLoad = async () => {
             const fetchSession = await getSession();
 
-            const cookieValue = document.cookie
-                .split('; ')
-                .find((cookie) => cookie.startsWith('token'))
-                ?.split('=')[1];
-            console.log();
-
             setSession(fetchSession);
             fetchPosts();
         };

@@ -1,4 +1,5 @@
 export type Post = {
+    videos: number;
     id: string;
     content: string;
     createdAt: string; // You might want to use a more specific type for date

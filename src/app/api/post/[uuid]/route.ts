@@ -35,7 +35,7 @@ export const DELETE = async (
 
         const folderPath = `./public/uploads/posts/${params.uuid}`;
 
-        await fs.rmdir(folderPath, { recursive: true });
+        await fs.rm(folderPath, { recursive: true });
 
         await db.post.delete({
             where: { id: params.uuid },

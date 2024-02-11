@@ -23,7 +23,7 @@ export const POST = async (req: Request) => {
         }
 
         const body = await req.json();
-        const { text, images } = body;
+        const { text, images, videos } = body; // Extract videos from request body
 
         if (!text) {
             return Response.json(
@@ -43,6 +43,7 @@ export const POST = async (req: Request) => {
             data: {
                 content: text,
                 images: images.length,
+                videos: videos.length,
                 userId: session.user.id,
             },
         });
@@ -50,7 +51,11 @@ export const POST = async (req: Request) => {
         await fs.mkdir(`./public/uploads/posts/${newPost.id}`, {
             recursive: true,
         });
+        await fs.mkdir(`./public/uploads/posts/${newPost.id}/video`, {
+            recursive: true,
+        });
 
+        // Handle image uploads
         images.map(async (element: string, index: number) => {
             const imageData = Buffer.from(element, 'base64');
 
@@ -65,13 +70,23 @@ export const POST = async (req: Request) => {
             require('fs').writeFileSync(filePath, pngImageData);
         });
 
+        // Handle video uploads
+        videos.map(async (element: string, index: number) => {
+            const videoData = Buffer.from(element, 'base64');
+
+            const filePath = `./public/uploads/posts/${newPost.id}/video/${
+                index + 1
+            }.mp4`;
+            require('fs').writeFileSync(filePath, videoData);
+        });
+
         return NextResponse.json(
-            { post: newPost, message: 'Post created succsessfully' },
+            { post: newPost, message: 'Post created successfully' },
             { status: 201 }
         );
     } catch (e) {
         return Response.json(
-            { message: 'Someting went wrong...' },
+            { message: 'Something went wrong...' },
             { status: 500 }
         );
     }

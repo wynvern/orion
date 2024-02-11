@@ -24,20 +24,22 @@ const CreatePost: React.FC<NewPostProps> = ({
 }) => {
     const [newPostContent, setNewPostContent] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
-    const [uploadedImages, setUploadedImages] = useState<string[]>([]);
-    const [imageFiles, setImageFiles] = useState<File[]>([]); // New state for holding File objects
+    const [uploadedMedia, setUploadedMedia] = useState<string[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [videoFiles, setVideoFiles] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [wordCounter, setWordCounter] = useState(0);
 
-    const countWords = (text: string) => {
+    const countLetters = (text: string) => {
         const words = text.trim().split(/\s+/).join();
         setWordCounter(words.length);
     };
 
     const clearEverything = () => {
         setWordCounter(0);
-        setUploadedImages([]);
+        setUploadedMedia([]);
         setImageFiles([]);
+        setVideoFiles([]);
     };
 
     const convertImagesToBase64 = async (images: File[]): Promise<string[]> => {
@@ -63,43 +65,77 @@ const CreatePost: React.FC<NewPostProps> = ({
         }
     };
 
+    const convertVideosToBase64 = async (videos: File[]): Promise<string[]> => {
+        const base64Promises = videos.map((file) => {
+            return new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64String = reader.result
+                        ?.toString()
+                        .split(',')[1] as string;
+                    resolve(base64String);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        try {
+            const base64Videos = await Promise.all(base64Promises);
+            return base64Videos;
+        } catch (error) {
+            console.error('Error converting videos to base64:', error);
+            throw error;
+        }
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
 
-        if (imageFiles.length + (files?.length || 0) > 4) {
+        if (
+            imageFiles.length + (files?.length || 0) > 4 ||
+            videoFiles.length + (files?.length || 0) > 4
+        ) {
             return false;
         }
 
         if (files) {
-            // Only set the File objects to the state
-            setImageFiles((prevFiles) => [...prevFiles, ...Array.from(files)]);
-            const imageUrls = Array.from(files).map((file) =>
-                URL.createObjectURL(file)
-            );
-            setUploadedImages((prevImages) => [...prevImages, ...imageUrls]);
+            const newFiles = Array.from(files);
+            newFiles.forEach((file) => {
+                if (file.type.startsWith('image/')) {
+                    setImageFiles((prevFiles) => [...prevFiles, file]);
+                } else if (file.type.startsWith('video/')) {
+                    setVideoFiles((prevFiles) => [...prevFiles, file]);
+                }
+            });
+
+            const mediaUrls = newFiles.map((file) => URL.createObjectURL(file));
+            setUploadedMedia((prevMedia) => [...prevMedia, ...mediaUrls]);
         }
     };
 
     const createPost = async () => {
         try {
             setIsLoading(true);
-            const images = await convertImagesToBase64(imageFiles);
+            const imageData = await convertImagesToBase64(imageFiles);
+            const videoData = await convertVideosToBase64(videoFiles);
 
             const response = await fetch('/api/post', {
                 method: 'POST',
                 body: JSON.stringify({
                     text: newPostContent,
-                    images: images,
+                    images: imageData,
+                    videos: videoData,
                 }),
             });
+
             if (response.ok) {
                 handleCreatePost();
                 setIsLoading(false);
                 setIsActive(false);
                 clearEverything();
             }
-        } catch (e: any) {
-            console.error('Error:', e.message);
+        } catch (error) {
+            console.error('Error:', error);
         }
         setIsLoading(false);
     };
@@ -136,7 +172,7 @@ const CreatePost: React.FC<NewPostProps> = ({
                                     inputWrapper: 'border-none p-0',
                                 }}
                                 onValueChange={(e) => {
-                                    countWords(e);
+                                    countLetters(e);
                                     setNewPostContent(e);
                                 }}
                             />
@@ -148,20 +184,18 @@ const CreatePost: React.FC<NewPostProps> = ({
 
                             <div
                                 className={`grid grid-cols-4 gap-4 ${
-                                    uploadedImages.length > 0 ? 'mt-6' : ''
+                                    uploadedMedia.length > 0 ? 'mt-6' : ''
                                 }`}
                             >
-                                {uploadedImages.map((imageUrl, index) => (
+                                {uploadedMedia.map((imageUrl, index) => (
                                     <div key={index} className="relative">
                                         <Button
                                             size="sm"
                                             onClick={() => {
-                                                setUploadedImages(
-                                                    (prevImages) =>
-                                                        prevImages.filter(
-                                                            (_, i) =>
-                                                                i !== index
-                                                        )
+                                                setUploadedMedia((prevImages) =>
+                                                    prevImages.filter(
+                                                        (_, i) => i !== index
+                                                    )
                                                 );
                                                 setImageFiles((prevFiles) =>
                                                     prevFiles.filter(
@@ -218,7 +252,7 @@ const CreatePost: React.FC<NewPostProps> = ({
                 ref={fileInputRef}
                 style={{ display: 'none' }}
                 onChange={(e) => handleFileChange(e)}
-                accept="image/*"
+                accept=".jpg, .jpeg, .png, .mp4"
             />
         </Modal>
     );
