@@ -67,6 +67,8 @@ const Post = ({ params }: { params: { uuid: string } }) => {
     }, []);
 
     const createComment = async () => {
+        if (commentContent.length < 1) return false;
+
         try {
             const response = await fetch(`/api/post/${post?.id}/comment`, {
                 method: 'POST',
